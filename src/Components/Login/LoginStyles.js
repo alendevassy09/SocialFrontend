@@ -8,7 +8,7 @@
       },
     ContainerMainBox:{
       width: 300,
-      height: 400,
+      height: 500,
       display: "flex",
       flexDirection: "column",
       justifyContent: "center",
@@ -40,6 +40,15 @@
       color: "#005ecb",
       textDecoration: "underline",
       cursor: "pointer",
+    },
+    googleIcon:{
+      boxShadow: 2,
+      marginTop: 2,
+      backgroundColor: "#f50057",
+      "&:hover": {
+        backgroundColor: "#ab003c",
+        color: "#3c52b2",
+      },
     }
 
   }

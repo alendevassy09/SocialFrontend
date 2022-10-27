@@ -7,6 +7,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import GoogleIcon from "@mui/icons-material/Google";
 import { Box, TextField, Container, Button, Typography } from "@mui/material";
 import styles from "./LoginStyles";
 function Login() {
@@ -15,7 +16,7 @@ function Login() {
     password: "",
     weight: "",
     weightRange: "",
-    showPassword: false, 
+    showPassword: false,
   });
 
   const handleChange = (prop) => (event) => {
@@ -75,8 +76,15 @@ function Login() {
               />
             </FormControl>
             <Button sx={{ marginTop: 3 }} variant="contained">
-              Sign In
+              Login In
             </Button>
+            <Typography sx={{ marginTop: 2,color:'#9bc0ff' }} variant="p">
+              Or Login With
+            </Typography>
+            <IconButton sx={styles.googleIcon} aria-label="delete">
+              <GoogleIcon style={{ color: "white" }}></GoogleIcon>
+            </IconButton>
+
             <Box sx={styles.TextBox}>
               <Typography sx={styles.TextBoxQuestion} variant="p">
                 register
