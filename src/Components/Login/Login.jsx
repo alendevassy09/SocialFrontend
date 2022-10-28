@@ -8,6 +8,8 @@ import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import GoogleIcon from "@mui/icons-material/Google";
+import SignUp from "../signUp/signUp";
+import Grid from "@mui/material/Grid";
 import { Box, TextField, Container, Button, Typography } from "@mui/material";
 import styles from "./LoginStyles";
 function Login() {
@@ -44,6 +46,7 @@ function Login() {
             </Box>
 
             <TextField
+              required
               sx={{ paddingBottom: 3 }}
               type="text"
               id="standard-basic"
@@ -54,9 +57,10 @@ function Login() {
 
             <FormControl fullWidth sx={{ m: 1 }} variant="standard">
               <InputLabel htmlFor="standard-adornment-password">
-                Password
+                Password*
               </InputLabel>
               <Input
+                required
                 fullWidth
                 id="standard-adornment-password"
                 type={values.showPassword ? "text" : "password"}
@@ -78,7 +82,7 @@ function Login() {
             <Button sx={{ marginTop: 3 }} variant="contained">
               Login In
             </Button>
-            <Typography sx={{ marginTop: 2,color:'#9bc0ff' }} variant="p">
+            <Typography sx={{ marginTop: 2, color: "#9bc0ff" }} variant="p">
               Or Login With
             </Typography>
             <IconButton sx={styles.googleIcon} aria-label="delete">
@@ -87,7 +91,8 @@ function Login() {
 
             <Box sx={styles.TextBox}>
               <Typography sx={styles.TextBoxQuestion} variant="p">
-                register
+            <SignUp></SignUp>
+           
               </Typography>
               <Typography sx={styles.TextBoxQuestion} variant="p">
                 forgot password?
