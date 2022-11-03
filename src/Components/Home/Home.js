@@ -11,7 +11,7 @@ function Home() {
     <div>
       <Box>
         <NavBar></NavBar>
-        <Stack direction="row" spacing={2} justifyContent="space-between">
+        <Stack direction="row" spacing={{md:3}} justifyContent="space-between">
           <SideBar></SideBar>
           <Feeds></Feeds>
           <RightBar></RightBar>

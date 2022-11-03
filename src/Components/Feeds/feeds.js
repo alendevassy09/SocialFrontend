@@ -5,7 +5,7 @@ import Posts from '../Posts/Post'
 function feeds() {
 
   return (
-    <Box flex={3} p={2}>
+    <Box flex={3} p={{md:2}}>
        <Posts></Posts>
        <Posts></Posts>
        <Posts></Posts>
