@@ -6,21 +6,27 @@
     "@date-io/date-fns": "^1.3.13",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@hookform/resolvers": "^2.9.10",
     "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.10.11",
+    "@mui/styles": "^5.10.10",
     "@mui/x-date-pickers": "^5.0.5",
     "@mui/x-date-pickers-pro": "^5.0.5",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.1.3",
+    "babel-preset-es2015": "^6.24.1",
     "chokidar": "^3.5.3",
     "date-fns": "^2.29.3",
     "dayjs": "^1.11.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.38.0",
     "react-router-dom": "^6.4.2",
     "react-scripts": "^2.1.3",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "yup": "^0.32.11"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -45,5 +51,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/preset-react": "^7.18.6"
   }
 }
