@@ -1,29 +1,31 @@
 import React, { useState } from "react";
 import Backdrop from "@mui/material/Backdrop";
 import Fade from "@mui/material/Fade";
-import dayjs from "dayjs";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
-import { Box, Typography } from "@mui/material";
+import { Box, Snackbar, Typography } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import axios from "../../axios";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
+
 const schema = yup.object().shape({
-  firstName: yup.string().required(),
-  LastName: yup.string().required(),
+  firstName: yup
+    .string()
+    .required()
+    .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
+  LastName: yup
+    .string()
+    .required()
+    .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
   email: yup.string().email(),
-  birth: yup.string().required(),
   gender: yup.string().required(),
   pasword: yup
     .string()
@@ -32,9 +34,16 @@ const schema = yup.object().shape({
     .required(),
 });
 function SignUp() {
-  const navigate=useNavigate()
-  const [age, setAge] = React.useState("");
+  const [state, setSnackbar] = React.useState({
+    snackBar: false,
+    vertical: "top",
+    horizontal: "center",
+  });
 
+  const { vertical, horizontal, snackBar } = state;
+
+  const [age, setAge] = React.useState("");
+  const navigate = useNavigate();
   const handleChangeGender = (event) => {
     setAge(event.target.value);
   };
@@ -46,12 +55,6 @@ function SignUp() {
     resolver: yupResolver(schema),
   });
   console.log(errors);
-  const [value, setValue] = React.useState(dayjs(Date.now()));
-
-  const handleChange = (newValue) => {
-    setValue(newValue);
-  };
-
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -66,20 +69,32 @@ function SignUp() {
     outline: "none",
     borderRadius: 3,
   };
+  
+
   const submitForm = (data) => {
     axios.post("/signup", data).then((response) => {
-      if(response.data.exist){
-        console.log(response.data.exist);
-      }else{
-        localStorage.setItem('auth',true)
-        navigate('/home')
-       
+      if (response.data.response.exist) {
+        console.log(response.data.response.exist);
+        setSnackbar({ snackBar: true, vertical: "top", horizontal: "center" });
+        console.log(snackBar);
+      } else {
+        localStorage.setItem("userToken", response.data.token);
+        navigate("/home");
       }
     });
   };
 
   return (
     <div>
+      <Snackbar
+        anchorOrigin={{ vertical, horizontal }}
+        open={snackBar}
+        onClose={() => {
+          setSnackbar({ open: false, vertical: "top", horizontal: "center" });
+        }}
+        message="User Already Exists"
+        key={vertical + horizontal}
+      />
       <Typography sx={{ cursor: "pointer" }} onClick={handleOpen}>
         Create Account
       </Typography>
@@ -145,7 +160,12 @@ function SignUp() {
                       required
                       fullWidth
                       id="outlined-required"
-                      label="First Name"
+                      error={errors.firstName ? true : false}
+                      label={
+                        errors.firstName
+                          ? errors.firstName.message
+                          : "First Name"
+                      }
                     />
                   </Grid>
                   <Grid item xs={12} md={5.8} sx={{ marginBottom: 1 }}>
@@ -156,19 +176,23 @@ function SignUp() {
                       fullWidth
                       required
                       id="outlined-required"
-                      label="Last Name"
+                      error={errors.email ? true : false}
+                      label={
+                        errors.LastName ? errors.LastName.message : "Last Name"
+                      }
                     />
                   </Grid>
                 </Grid>
 
                 <TextField
+                  error={errors.email ? true : false}
                   required
                   name="email"
                   type={"email"}
                   {...register("email")}
                   fullWidth
                   id="outlined-required"
-                  label="Email"
+                  label={errors.email ? errors.email.message : "Email"}
                 />
                 <TextField
                   {...register("pasword")}
@@ -178,7 +202,8 @@ function SignUp() {
                   sx={{ marginTop: 1 }}
                   fullWidth
                   id="outlined-required"
-                  label="password"
+                  error={errors.pasword ? true : false}
+                  label={errors.pasword ? errors.pasword.message : "Passsword"}
                 />
 
                 <FormControl fullWidth>
@@ -186,49 +211,36 @@ function SignUp() {
                     container
                     sx={{ display: "flex", justifyContent: "space-between" }}
                   >
-                    <Grid item xs={12} md={5.8}>
+                    <Grid item xs={12} md={12}>
                       <Box sx={{ marginTop: 2 }}>
                         <InputLabel
                           sx={{ marginTop: 2 }}
                           id="demo-simple-select-label"
                         >
-                          Gender
+                          {errors.gender ? (
+                            <p style={{ color: "red" }}>
+                              {errors.gender.message}
+                            </p>
+                          ) : (
+                            "Gender"
+                          )}
                         </InputLabel>
                         <Select
+                          error={errors.gender ? true : false}
                           fullWidth
                           {...register("gender")}
                           labelId="demo-simple-select-label"
                           id="demo-simple-select"
                           value={age}
-                          label="Age"
+                          label={
+                            errors.gender ? errors.gender.message : "Gender"
+                          }
                           onChange={handleChangeGender}
                         >
                           <MenuItem value={"female"}>female</MenuItem>
                           <MenuItem value={"male"}>male</MenuItem>
                           <MenuItem value={"other"}>other</MenuItem>
                         </Select>
-                      </Box>
-                    </Grid>
-                    <Grid xs={12} md={5.8}>
-                      <Box>
-                        <LocalizationProvider  dateAdapter={AdapterDayjs}>
-                          <DesktopDatePicker
-                            {...register("birth")}
-                            label="Date Of Birth"
-                            inputFormat="MM/DD/YYYY"
-                            value={value}
-                            onChange={handleChange}
-                            renderInput={(params) => (
-                              <TextField
-                                fullWidth
-                                type="text"
-                                name="birth"
-                                sx={{ marginTop: 2 }}
-                                {...params}
-                              />
-                            )}
-                          />
-                        </LocalizationProvider>
                       </Box>
                     </Grid>
                   </Grid>
@@ -248,7 +260,11 @@ function SignUp() {
                   xs={12}
                   sx={{ display: "flex", justifyContent: "center" }}
                 >
-                  <Button sx={{marginTop:2}} type="submit" variant="contained">
+                  <Button
+                    sx={{ marginTop: 2 }}
+                    type="submit"
+                    variant="contained"
+                  >
                     Sign Up
                   </Button>
                 </Grid>

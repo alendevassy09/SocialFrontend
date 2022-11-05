@@ -23,7 +23,7 @@ const schema = yup.object().shape({
     .string()
     .email()
     .required(),
-  password: yup
+  pasword: yup
     .string()
     .min(4)
     .max(8)
@@ -68,7 +68,7 @@ function Login() {
     axios.post("/userlogin", data).then((response) => {
       if (response.data.user) {
         if (response.data.password) {
-          localStorage.setItem("auth", true);
+          localStorage.setItem("userToken",response.data.token);
           navigate("/home");
         } else {
           SetLoginState("Wrong Password");
@@ -127,7 +127,7 @@ function Login() {
               <Input
                 
                 error={errors.password ? true : false}
-                {...register("password")}
+                {...register("pasword")}
                 required
                 fullWidth
                 id="standard-adornment-password"

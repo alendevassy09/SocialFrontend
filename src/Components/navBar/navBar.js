@@ -19,8 +19,7 @@ const SearchBar = styled("div")(({ theme }) => ({
   backgroundColor: "white",
   padding: "0 10px",
   borderRadius: theme.shape.borderRadius,
-  width:"35%" ,
-  justifyContent:"end"
+  width: "35%",
 }));
 const Icons = styled(Box)(({ theme }) => ({
   display: "none",
@@ -41,10 +40,6 @@ const UserBox = styled(Box)(({ theme }) => ({
 function navBar() {
   const navigate = useNavigate();
   const [openMenu, setOpen] = useState(false);
-  function logout() {
-    localStorage.removeItem("auth");
-    navigate("/");
-  }
   return (
     <AppBar position="sticky">
       <StyledToolbar>
@@ -56,12 +51,7 @@ function navBar() {
           <InputBase></InputBase>
         </SearchBar>
         <Icons>
-          <Badge badgeContent={4} color="error">
-            <MailIcon color="action" />
-          </Badge>
-          <Badge badgeContent={4} color="error">
-            <Notifications color="action" />
-          </Badge>
+          
           <Avatar onClick={(e) => setOpen(true)} sx={{ width: 30, height: 30 }}>
             A
           </Avatar>
@@ -89,7 +79,14 @@ function navBar() {
       >
         <MenuItem>Profile</MenuItem>
         <MenuItem>My account</MenuItem>
-        <MenuItem>Logout</MenuItem>
+        <MenuItem
+          onClick={() => {
+            localStorage.removeItem("userToken");
+            navigate('/')
+          }}
+        >
+          Logout
+        </MenuItem>
       </Menu>
     </AppBar>
   );
