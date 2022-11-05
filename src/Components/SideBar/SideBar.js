@@ -5,8 +5,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
-import Messages from "../Messages/Messages";
-import { useNavigate,Route,Routes } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Chat, CircleNotifications, Explore, Home } from "@mui/icons-material";
 function SideBar() {
   const navigate=useNavigate()
@@ -52,13 +51,5 @@ function SideBar() {
     </Box>
   );
 }
-function RouterPath(){
-  return(
-    <div>
-    <Routes>
-      <Route path="/Messages" element={<Messages/>}></Route>
-    </Routes>
-    </div>
-  )
-}
+
 export default SideBar;
