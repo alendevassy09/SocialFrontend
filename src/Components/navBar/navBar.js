@@ -10,15 +10,16 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from '../../axios'
+import axios from "../../Axios/axios";
+import { useSelector } from "react-redux";
 const StyledToolbar = styled(Toolbar)({
   display: "flex",
   justifyContent: "space-between",
 });
 const SearchBar = styled("div")(({ theme }) => ({
   backgroundColor: "white",
-  padding: "1px",
-  borderRadius: theme.shape.borderRadius,
+  padding: "3px",
+  borderRadius: "16px",
   width: "32%",
 }));
 const Icons = styled(Box)(({ theme }) => ({
@@ -42,44 +43,47 @@ function navBar() {
   const [openMenu, setOpen] = useState(false);
   const [search, setSearch] = useState(false);
   const [searchResult, setSearchResult] = useState([]);
-const doSearch=(event)=>{
-  //console.log(event.target.value);
-  axios.get('/search',{headers:{'name':event.target.value}}).then((response)=>{
-    console.log(response)
-if(response.data[0]){
-  setSearchResult(response.data)
+  const doSearch = (event) => {
+    let token=localStorage.getItem('userToken') 
+    axios
+      .get("/search", { headers: { name: event.target.value,token:token} })
+      .then((response) => {
+        if(response.data.status===false){
+          console.log(response);
+          localStorage.removeItem("userToken")
+          navigate('/')
+        }else{
+          console.log(response);
+          setSearchResult(response.data);
+        }
+        
+      });
+  };
 
-}else{
-  setSearchResult([{firstName:"No Result Found"}])
-}
-})
-}
-
+  const name = useSelector((state) => state.user.fname);
+  console.log(name);
 
   return (
-    <AppBar position="sticky">
+    <AppBar position="sticky" sx={{backgroundColor:"#ff5252"}}>
       <StyledToolbar>
         <Typography variant="h6" sx={{ display: { xs: "none", sm: "block" } }}>
-          alen
+          {name}
         </Typography>
         <ChildCare sx={{ display: { xs: "block", sm: "none" } }}></ChildCare>
-        <SearchBar>
+        <SearchBar sx={{ display: { md: "block", xs: "none" } }}>
           <InputBase
             onClick={() => {
-              if (search) { 
-               
-
+              if (search) {
                 setSearch(false);
               } else {
                 setSearch(true);
               }
             }}
             onChange={doSearch}
-            sx={{ backgroundColor: "whitesmoke", width: "90%" }}
+            sx={{ width: "90%"}}
+            placeholder="Search"
           ></InputBase>
-          <IconButton aria-label="search" size="medium">
-            <Search fontSize="inherit" />
-          </IconButton>
+
           <Box
             display={search ? "block" : "none"}
             sx={{
@@ -103,7 +107,37 @@ if(response.data[0]){
                   gap={2}
                   flexDirection={"column"}
                 >
-                  {obj.firstName}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      width: "50%",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <Box sx={{ marginRight: 1 }}>
+                        <Avatar
+                          sx={{ bgcolor: "yellow" }}
+                          alt="Remy Sharp"
+                          src="/broken-image.jpg"
+                        >
+                          B
+                        </Avatar>
+                      </Box>
+                      <Box>
+                        <Typography variant="h6" fontWeight={100}>
+                          {obj.firstName}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <Box>
+                      <Typography fontSize={14} color="skyblue">
+                        Follow
+                      </Typography>
+                    </Box>
+                  </Box>
                 </Box>
               );
             })}
@@ -116,6 +150,18 @@ if(response.data[0]){
           </Avatar>
         </Icons>
         <UserBox>
+          <IconButton
+            sx={{
+              backgroundColor: "white",
+              color: "black",
+              "&:hover": {
+                backgroundColor: "grey",
+              },
+            }}
+            aria-label="search"
+          >
+            <Search />
+          </IconButton>
           <Avatar onClick={(e) => setOpen(true)} sx={{ width: 30, height: 30 }}>
             A
           </Avatar>

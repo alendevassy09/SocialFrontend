@@ -1,15 +1,17 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
-import axios from "axios";
 import { ThemeProvider } from "@mui/material/styles";
-import {theme} from './Theme/Theme'
-axios.defaults.url = "";
+import { Provider } from "react-redux";
+import { theme } from "./Theme/Theme";
+import store from './Redux/Store';
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
-      <App />
+      <Provider store={store}>
+        <App />
+      </Provider>
     </ThemeProvider>
   </React.StrictMode>
 );

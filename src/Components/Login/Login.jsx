@@ -13,11 +13,13 @@ import SignUp from "../signUp/signUp";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import axios from "../../axios";
+import axios from "../../Axios/axios";
 import { useNavigate } from "react-router-dom";
 import { Box, TextField, Container, Button, Typography } from "@mui/material";
 import styles from "./LoginStyles";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { update } from "../../Redux/UserSlice";
 const schema = yup.object().shape({
   email: yup
     .string()
@@ -32,7 +34,8 @@ const schema = yup.object().shape({
 function Login() {
   const navigate = useNavigate();
   const [LoginState, SetLoginState] = useState();
-
+  const [userId, setUserId] = useState("");
+  const dispatch = useDispatch();
   const {
     register,
     formState: { errors },
@@ -68,7 +71,17 @@ function Login() {
     axios.post("/userlogin", data).then((response) => {
       if (response.data.user) {
         if (response.data.password) {
-          localStorage.setItem("userToken",response.data.token);
+          console.log(response.data.userData._id);
+          
+
+          dispatch(
+            update({
+              userId: response.data.userData._id,
+              fname: response.data.userData.firstName,
+              lname: response.data.userData.LastName,
+            })
+          );
+          localStorage.setItem("userToken", response.data.token);
           navigate("/home");
         } else {
           SetLoginState("Wrong Password");
@@ -79,7 +92,7 @@ function Login() {
     });
   };
   return (
-    <div>
+    <Box sx={{backgroundColor:"whitesmoke"}}>
       <Container sx={styles.container}>
         <Box sx={styles.ContainerMainBox}>
           <form onSubmit={handleSubmit(submitForm)}>
@@ -111,13 +124,12 @@ function Login() {
               variant="standard"
               fullWidth
             />
-            <small  style={{ color: "red",marginBottom:3 }}>
+            <small style={{ color: "red", marginBottom: 3 }}>
               {errors.email ? errors.email.message : ""}
             </small>
 
             <FormControl fullWidth variant="standard">
               <InputLabel
-              
                 style={{ color: errors.password ? "red" : "" }}
                 htmlFor="standard-adornment-password"
               >
@@ -125,7 +137,6 @@ function Login() {
               </InputLabel>
 
               <Input
-                
                 error={errors.password ? true : false}
                 {...register("pasword")}
                 required
@@ -183,7 +194,7 @@ function Login() {
           </Box>
         </Box>
       </Container>
-    </div>
+    </Box>
   );
 }
 

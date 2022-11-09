@@ -10,7 +10,7 @@ import { Chat, CircleNotifications, Explore, Home } from "@mui/icons-material";
 function SideBar() {
   const navigate=useNavigate()
   return (
-    <Box flex={2} p={2} sx={{ display: { xs: "none", sm: "block" } }}>
+    <Box p={2} sx={{ display: { xs: "none", sm: "block" } }}>
       <Box position={"fixed"}>
 
       <List>
@@ -31,7 +31,7 @@ function SideBar() {
           </ListItemButton>
         </ListItem>
         <ListItem>
-          <ListItemButton LinkComponent={"a"} href="#">
+          <ListItemButton LinkComponent={"a"} href="#" onClick={()=>{navigate('/home/messages')}}>
             <ListItemIcon>
               <Chat fontSize="large"></Chat>
             </ListItemIcon>

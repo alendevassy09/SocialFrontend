@@ -12,7 +12,7 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import axios from "../../axios";
+import axios from "../../Axios/axios"
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 
