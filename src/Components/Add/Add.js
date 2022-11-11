@@ -50,6 +50,7 @@ function Add() {
       })
       .then((response) => {
         console.log(response);
+        
         dispatch(
           postAdd({
             post:response.data
@@ -69,7 +70,7 @@ function Add() {
           position: "fixed",
           bottom: 20,
           left: { xs: "calc(50% - 25px)", md: 30 },
-          backgroundColor:"#ff5252"
+          backgroundColor:"#1F3541"
         }}
       >
         <Fab color="primary" aria-label="add">

@@ -5,10 +5,10 @@ import Feeds from '../Feeds/feeds'
 import RightBar from '../RightBar/rightBar'
 function Contents() {
   return (
-    <Box width={"100%"}>
-      <Stack width={"100%"} direction="row" spacing={{md:3}} justifyContent="space-between">
+    <Box width={"100%"} >
+      <Stack width={"100%"} sx={{marginTop:{md:8}}} spacing={{md:3}} justifyContent="space-between">
       <Feeds></Feeds>
-       <RightBar></RightBar>
+       {/* <RightBar></RightBar> */}
         </Stack>
        
     </Box>

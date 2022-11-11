@@ -7,6 +7,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoggedIn from "./utils/loggedIn";
 import NotLoggedIn from "./utils/NotLoggedIn";
 import Messages from "./Components/Messages/Messages";
+import io from "socket.io-client"
+const socket=io.connect('http://localhost:3000')
 function App() {
   return (
     <div className="App">

@@ -24,8 +24,8 @@ function Messages() {
           borderRadius:3
         }}
       >
-        <UserText></UserText>
-        <ChatBox></ChatBox>
+        {/* <UserText></UserText>
+        <ChatBox></ChatBox> */}
       </Box>
     </Box>
   );
