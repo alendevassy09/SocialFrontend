@@ -36,10 +36,11 @@ const ExpandMore = styled((props) => {
     duration: theme.transitions.duration.shortest,
   }),
 }));
-
 function Post(props) {
+  const [comment,SetComment]=useState('')
+  const [existingComments,setExistingComments]=useState(props.data.comment?props.data.comment:[])
   const data = props.data;
-  console.log(data.likeStatus);
+  console.log(existingComments,'comment');
   const [check, setcheck] = useState(data.likeStatus ? true : false);
   const [likes, setLikes] = useState(data.likes ? data.likes.length : 0);
 
@@ -70,6 +71,16 @@ function Post(props) {
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+  const sendComment=()=>{
+if(comment!=''){
+    axios.post('/comment',{comment,id:data._id},{headers:{token}}).then((response)=>{
+      
+      setExistingComments([{user:"",text:comment,_id:"22"},...existingComments])
+      SetComment('')
+    })
+  
+  }
+  }
 
   return (
     <Card
@@ -82,7 +93,6 @@ function Post(props) {
         borderRadius: 3,
         position: "relative",
         backgroundColor: "#EDF2F3",
-        
       }}
       key={data._id}
     >
@@ -168,25 +178,80 @@ function Post(props) {
               fullWidth
               variant="standard"
               multiline
+              value={comment}
+              onChange={(event)=>{
+                SetComment(event.target.value)
+              }}
             />
-            <IconButton>
+            <IconButton onClick={sendComment}>
               <Send></Send>
             </IconButton>
           </Box>
-          <Box
-            sx={{
-              marginTop: 2,
-              padding: 2,
-             display:"flex",
-height:"auto",
-              borderRadius: 2,
-              backgroundColor: "whitesmoke",
-            }}
-          >
-            <Avatar sx={{ width:{md:20,lg:40} , height:{md:20,lg:40} }} alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-            <Box sx={{width:"auto",maxWidth:"70%",padding:1,display:"flex",backgroundColor:"#abc4ff",marginLeft:1,borderRadius:2}}>
-            sdffffffffffff
+          <Box sx={{marginTop:2}}>
+
+            {
+              existingComments[0]?existingComments.map((obj)=>{
+
+
+                return(<Box
+                key={obj._id}
+                  sx={{
+                   
+                    padding: 2,
+                    display: "flex",
+                    height: "auto",
+                    borderRadius: 2,
+                    backgroundColor: "whitesmoke",
+                  }}
+                >
+                  <Avatar
+                    sx={{ width: { md: 20, lg: 40 }, height: { md: 20, lg: 40 } }}
+                    alt="Remy Sharp"
+                    src="/static/images/avatar/1.jpg"
+                  />
+                  <Box
+                    sx={{
+                      width: "auto",
+                      maxWidth: "70%",
+                      padding: 1,
+                      display: "flex",
+                      backgroundColor: "#abc4ff",
+                      marginLeft: 1,
+                      borderRadius: 2,
+                    }}
+                  >
+                    {obj.text}
+                  </Box>
+                </Box>)
+
+              }):<Box
+              sx={{
+               
+                padding: 2,
+                display: "flex",
+                height: "auto",
+                borderRadius: 2,
+                backgroundColor: "whitesmoke",
+              }}
+            >
+          
+              <Box
+                sx={{
+                  width: "auto",
+                  maxWidth: "70%",
+                  padding: 1,
+                  display: "flex",
+                  backgroundColor: "#abc4ff",
+                  marginLeft: 1,
+                  borderRadius: 2,
+                }}
+              >
+                No Comments
+              </Box>
             </Box>
+            }
+
+      
           </Box>
         </CardContent>
       </Collapse>
