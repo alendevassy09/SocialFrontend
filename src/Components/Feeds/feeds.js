@@ -6,7 +6,7 @@ import {} from "../../Redux/PostSlice";
 function feeds() {
   const posts = useSelector((state) => state.post.post);
   return (
-    <Box sx={{ width: { md: "100%", xs: "100%" } }}>
+    <Box sx={{ width: { md: "100%", xs: "100%" } ,height:"100vh"}}>
       {!posts[0] ? (
         <Box
           sx={{

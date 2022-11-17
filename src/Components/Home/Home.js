@@ -27,7 +27,7 @@ function Home() {
   }, []);
   return (
     <div>
-      <Box sx={{ backgroundColor: "#c8b6ff" }}>
+      <Box sx={{ backgroundColor: "#ced4da" }}>
         {/* <NavBar></NavBar> */}
 
         <Stack direction="row" spacing={{ md: 2 }}>

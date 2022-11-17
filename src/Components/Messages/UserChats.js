@@ -13,8 +13,7 @@ function Messages() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        marginTop:{md:5},
-        
+        marginTop:{md:5}
       }}
     >
       <Box
@@ -27,8 +26,8 @@ function Messages() {
           borderRadius:3
         }}
       >
-         <UserText></UserText>
-        {/* <ChatBox></ChatBox> */}
+         {/* <UserText></UserText> */}
+        <ChatBox></ChatBox>
         
       </Box>
     </Box>

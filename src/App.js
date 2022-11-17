@@ -7,15 +7,14 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoggedIn from "./utils/loggedIn";
 import NotLoggedIn from "./utils/NotLoggedIn";
 import Messages from "./Components/Messages/Messages";
-import io from "socket.io-client"
-const socket=io.connect('http://localhost:3000')
+import UserChats from './Components/Messages/UserChats'
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
           <Route element={<NotLoggedIn />}>
-            <Route path="/"  element={<Login />} />
+            <Route path="/" element={<Login />} />
           </Route>
 
           <Route element={<LoggedIn />}>
@@ -23,13 +22,14 @@ function App() {
               <Route index element={<Navigate to="dash" />}></Route>
 
               <Route path="dash" index element={<Contents />} />
-              <Route path="messages" index element={<Messages />} />
+              <Route path="messages" index element={<Messages />}/>
+              <Route path="chat" index element={<UserChats />}/>
             </Route>
           </Route>
         </Routes>
 
-        {/* <Routes>
-          
+        {/* <Routes>  
+                
         </Routes> */}
         {/* <Layout></Layout>  */}
       </BrowserRouter>

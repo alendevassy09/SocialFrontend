@@ -1,10 +1,12 @@
 
 import { configureStore } from "@reduxjs/toolkit"
 import userReducer from './UserSlice';
-import postReducer from './PostSlice'
+import postReducer from './PostSlice';
+import FollowerReducer from "./FollowersSlice";
 export default configureStore({
     reducer:{
         user:userReducer,
-        post:postReducer
+        post:postReducer,
+        following:FollowerReducer
     }
 })
