@@ -4,10 +4,10 @@ import React from "react";
 import Home from "./Components/Home/Home";
 import Contents from "./Components/Contents/Contents";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import LoggedIn from "./utils/loggedIn";
-import NotLoggedIn from "./utils/NotLoggedIn";
+import LoggedIn from "./Utils/LoggedIn";
+import NotLoggedIn from "./Utils/NotLoggedIn";
 import Messages from "./Components/Messages/Messages";
-import UserChats from './Components/Messages/UserChats'
+import UserChats from "./Components/Messages/UserChats";
 function App() {
   return (
     <div className="App">
@@ -22,8 +22,8 @@ function App() {
               <Route index element={<Navigate to="dash" />}></Route>
 
               <Route path="dash" index element={<Contents />} />
-              <Route path="messages" index element={<Messages />}/>
-              <Route path="chat" index element={<UserChats />}/>
+              <Route path="messages" index element={<Messages />} />
+              <Route path="chat" index element={<UserChats />} />
             </Route>
           </Route>
         </Routes>

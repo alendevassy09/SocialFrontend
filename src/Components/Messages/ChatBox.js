@@ -1,26 +1,42 @@
-import { KeyboardBackspace, Search, Send } from "@mui/icons-material";
+import { KeyboardBackspace, Send } from "@mui/icons-material";
 import { Avatar, Box, IconButton, TextField, Typography } from "@mui/material";
 import React from "react";
 import io from "socket.io-client";
-
+import axios from "../../Axios/axios";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useState } from "react";
-const ENDPOINT = "http://localhost:4000";
 const socket = io.connect("http://localhost:4000");
 function ChatBox() {
+  const token = localStorage.getItem("userToken");
+  const toUser = JSON.parse(localStorage.getItem("chatTo"));
   let navigate = useNavigate();
   const [gotMsg, SetGotMsg] = useState([]);
   const [sentMsg, SetSentMsg] = useState([]);
-  const [totalMsg, setTotalMsg] = useState([{}]);
+  const [totalMsg, setTotalMsg] = useState([]);
   const [msg, SetMsg] = useState("");
+  const [room, SetRoom] = useState("1");
+  useEffect(() => {
+    axios
+      .get("/chat", { headers: { token, touser: toUser._id } })
+      .then((response) => {
+        setTotalMsg(response.data.chat);
+        console.log("mgs---------");
+        console.log(response);
+
+        socket.emit("join", response.data.room);
+        SetRoom(response.data.room);
+        console.log("mgs---------");
+      });
+  }, []);
+
   const sendMessage = async () => {
     console.log(sentMsg, "----");
     SetSentMsg([...sentMsg, msg]);
     const sendMessage = {
       message: msg,
       author: "alen",
-      room: 123,
+      room: room,
       time:
         new Date(Date.now()).getHours() +
         ":" +
@@ -29,12 +45,8 @@ function ChatBox() {
 
     await socket.emit("send_message", sendMessage);
     setTotalMsg([{ sendMessage }, ...totalMsg]);
-    SetMsg("")
+    SetMsg("");
   };
-  useEffect(() => {
-    let room = 123;
-    socket.emit("join", room);
-  }, []);
 
   useEffect(() => {
     const eventListener = (data) => {
@@ -46,6 +58,24 @@ function ChatBox() {
       socket.off("rececive_msg", eventListener);
     };
   }, [socket]);
+
+  useEffect(() => {
+    axios
+      .post(
+        "/chatCreate",
+        { messages: totalMsg },
+        { headers: { token, touser: toUser._id } }
+      )
+      .then((response) => {
+        console.log(response.data.room);
+        // let room = 123;
+        //SetRoom(response.data.room)
+      });
+  }, [totalMsg]);
+  useEffect(() => {
+    //socket.emit("join", room);
+  }, [room]);
+
   return (
     <Box
       sx={{
@@ -56,7 +86,8 @@ function ChatBox() {
         borderRadius: 3,
       }}
     >
-      <Box
+      <Box sx={{display:"none"}}>{gotMsg}</Box>
+      <Box 
         sx={{
           marginTop: 1,
           display: "flex",
@@ -72,9 +103,12 @@ function ChatBox() {
         >
           <KeyboardBackspace></KeyboardBackspace>
         </IconButton>
-        <Avatar sx={{ marginLeft: 1 }} />
+        <Avatar
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXjvkhrh8Ub6UZ14iCLq518vVx-u4cfNRlsA&usqp=CAU"
+          sx={{ marginLeft: 1 }}
+        />
         <Typography sx={{ marginLeft: 1, fontWeight: 300 }} variant="h6">
-          Name
+          {toUser.firstName.toUpperCase() + " " + toUser.LastName.toUpperCase()}
         </Typography>
       </Box>
       <hr />
@@ -121,16 +155,23 @@ function ChatBox() {
                 >
                   <Box
                     sx={{
+                      marginTop: 1,
                       maxWidth: "50%",
                       padding: 1,
                       borderRadius: 3,
-                      backgroundColor: "whitesmoke",
+                      backgroundColor: "wheat",
                       display: "flex",
                       flexDirection: "column",
                     }}
                   >
-                    <Box><Typography variant="h6">{obj.sendMessage.message}</Typography></Box>
-                    <Box><small>{obj.sendMessage.time}</small></Box>
+                    <Box>
+                      <Typography variant="h6">
+                        {obj.sendMessage.message}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <small>{obj.sendMessage.time}</small>
+                    </Box>
                   </Box>
                 </Box>
               );
@@ -145,19 +186,30 @@ function ChatBox() {
                 >
                   <Box
                     sx={{
+                      marginTop: 1,
                       maxWidth: "50%",
                       padding: 1,
                       borderRadius: 3,
-                      backgroundColor: "whitesmoke",
+                      backgroundColor: "#ccd5ae",
                       display: "flex",
                       flexDirection: "column",
                     }}
                   >
-                    <Box><Typography variant="h6">{obj.gotMessage.message}</Typography></Box>
-                    <Box><small>{obj.gotMessage.time}</small></Box>
+                    <Box>
+                      <Typography variant="h6">
+                        {obj.gotMessage.message}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <small>{obj.gotMessage.time}</small>
+                    </Box>
                   </Box>
                 </Box>
               );
+            }else{
+              return (
+                <Box></Box>
+              )
             }
           })}
         </Box>

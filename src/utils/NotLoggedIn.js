@@ -24,13 +24,13 @@ const NotLoggedIn = () => {
     })
   },[])
 
-  if(auth.authtoken=="loading"){
+  if(auth.authtoken==="loading"){
     return(
       <Box>loading</Box>
     )
   }else{
     return(
-      auth.authtoken==true?<Navigate to='/home'/>:<Outlet/>
+      auth.authtoken===true?<Navigate to='/home'/>:<Outlet/>
   )
   }
     

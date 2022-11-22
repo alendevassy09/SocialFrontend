@@ -1,7 +1,6 @@
 import React from "react";
 // import Header from "../Header/Header";
 import SideBar from "../SideBar/SideBar";
-import NavBar from "../navBar/navBar";
 import TopBar from "../TopBar/TopBar";
 import RightBar from "../RightBar/rightBar";
 import { Box, Stack } from "@mui/material";
@@ -24,10 +23,23 @@ function Home() {
         })
       );
     });
+
+
+    axios.get('/online',{headers:{token,status:true}}).then((response)=>{
+      console.log(response);
+    })
+   
   }, []);
+
+
+  window.onbeforeunload = function(event) { 
+    axios.get('/online',{headers:{token,status:false}}).then((response)=>{
+      console.log(response);
+    })
+  };
   return (
     <div>
-      <Box sx={{ backgroundColor: "#ced4da" }}>
+      <Box sx={{ backgroundColor: "#f1faee" }}>
         {/* <NavBar></NavBar> */}
 
         <Stack direction="row" spacing={{ md: 2 }}>

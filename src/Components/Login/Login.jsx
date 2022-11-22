@@ -8,8 +8,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import GoogleIcon from "@mui/icons-material/Google";
-import SignUp from "../signUp/signUp";
+import SignUp from "../SignUp/SignUp";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -20,6 +19,7 @@ import styles from "./LoginStyles";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { update } from "../../Redux/UserSlice";
+import { useEffect } from "react";
 const schema = yup.object().shape({
   email: yup
     .string()
@@ -31,10 +31,10 @@ const schema = yup.object().shape({
     .max(8)
     .required(),
 });
+//const google = window.google;
 function Login() {
   const navigate = useNavigate();
   const [LoginState, SetLoginState] = useState();
-  const [userId, setUserId] = useState("");
   const dispatch = useDispatch();
   const {
     register,
@@ -91,6 +91,30 @@ function Login() {
       }
     });
   };
+
+
+
+
+
+  function handleCallbackResponse(response){
+    console.log(response.credentials);
+  }
+  useEffect(()=>{
+    window.google.accounts.id.initialize({
+      client_id:"425906299488-pf2bkkrae0ste6lkaf5rvenbulncqd53.apps.googleusercontent.com",
+      callback:handleCallbackResponse
+    })
+    window.google.accounts.id.renderButton(
+      document.getElementById("signInButton"),
+      {theme:"outline",size:"large"}
+    )
+  },[])
+
+
+
+
+
+
   return (
     <Box sx={{backgroundColor:"whitesmoke"}}>
       <Container sx={styles.container}>
@@ -120,7 +144,7 @@ function Login() {
               required
               type="text"
               id="standard-basic"
-              label="UserEmail"
+              label="User Email"
               variant="standard"
               fullWidth
             />
@@ -180,16 +204,19 @@ function Login() {
               </Box>
 
               <Box>
-                <IconButton sx={styles.googleIcon} aria-label="delete">
+                <div id="signInButton">
+
+                </div>
+                {/* <IconButton  sx={styles.googleIcon} aria-label="delete">
                   <GoogleIcon style={{ color: "white" }}></GoogleIcon>
-                </IconButton>
+                </IconButton> */}
               </Box>
             </Box>
           </form>
           <Box sx={styles.TextBox}>
             <SignUp></SignUp>
             <Typography sx={styles.TextBoxQuestion} variant="p">
-              forgot password?
+              Forgot Password?
             </Typography>
           </Box>
         </Box>

@@ -13,8 +13,8 @@ function SideBar() {
   const dispatch=useDispatch()  
   let token = localStorage.getItem("userToken");
   const navigate = useNavigate();
-  const [search, setSearch] = useState(false);
   const [searchResult, setSearchResult] = useState([]);
+  const [empty,setEmpty]=useState(false)
 
   useEffect(() => {
     axios.get("/getFriends", { headers: { token } }).then((response) => {
@@ -37,10 +37,16 @@ function SideBar() {
           navigate("/");
         } else {
           console.log(response.data);
-          if (event.target.value != "") {
+          if (event.target.value !== "") {
             setSearchResult(response.data);
+            if(!response.data[0]){
+              setEmpty(true)
+             }else{
+              setEmpty(false)
+             }
           } else {
             setSearchResult([]);
+            setEmpty(false)
           }
         }
       });
@@ -52,12 +58,13 @@ function SideBar() {
         width: "100%",
         height: "90vh",
         justifyContent: "end",
+        
       }}
     >
       <Box
         sx={{
-          backgroundColor: "#EDF2F3",
-
+          backgroundColor: "#e9e9e9",
+          color:"black",
           width: "24%",
           height: "90%",
           position: "fixed",
@@ -69,12 +76,13 @@ function SideBar() {
           flexDirection: "column",
           alignItems: "center",
           padding: 3,
+          
         }}
       >
         <Box
           sx={{
             width: "80%",
-            backgroundColor: "#AFD8F2",
+            backgroundColor: "#a594f9",
             minHeight: 50,
             borderRadius: 5,
             boxShadow: 2,
@@ -95,7 +103,9 @@ function SideBar() {
               onChange={doSearch}
             ></TextField>
           </Box>
+          
         </Box>
+        {empty? <p>No Results Found</p>:""}
         {!searchResult[0] ? (
           <Box sx={{ width: "80%", marginTop: 2 }}>
             <Box sx={{ width: "100%" }}>
@@ -130,42 +140,3 @@ function SideBar() {
 
 export default SideBar;
 
-{
-  /* <Box position={"fixed"}  sx={{boxShadow:5,width:"25%" ,borderRadius:3,marginTop:2,marginLeft:4}}>
-
-<List>
-  <ListItem>
-    <ListItemButton LinkComponent={"a"} onClick={()=>{navigate('/home/dash')}}>
-      <ListItemIcon >
-        <Home fontSize="large"></Home>
-      </ListItemIcon>
-      <ListItemText sx={{display:{xs:"none",md:"block"}}}><Typography variant="h6">Homepage</Typography></ListItemText>
-    </ListItemButton>
-  </ListItem>
-  <ListItem>
-    <ListItemButton LinkComponent={"a"} href="#">
-      <ListItemIcon>
-        <Explore fontSize="large"></Explore>
-      </ListItemIcon>
-      <ListItemText sx={{display:{xs:"none",md:"block"}}}><Typography variant="h6">Explore</Typography></ListItemText>
-    </ListItemButton>
-  </ListItem>
-  <ListItem>
-    <ListItemButton LinkComponent={"a"} href="#" onClick={()=>{navigate('/home/messages')}}>
-      <ListItemIcon>
-        <Chat fontSize="large"></Chat>
-      </ListItemIcon>
-      <ListItemText sx={{display:{xs:"none",md:"block"}}}><Typography variant="h6">Messages</Typography></ListItemText>
-    </ListItemButton>
-  </ListItem>
-  <ListItem>
-    <ListItemButton LinkComponent={"a"} href="#">
-      <ListItemIcon>
-        <CircleNotifications fontSize="large"></CircleNotifications>
-      </ListItemIcon>
-      <ListItemText sx={{display:{xs:"none",md:"block"}}}><Typography variant="h6">Notifications</Typography></ListItemText>
-    </ListItemButton>
-  </ListItem>
-</List>
-</Box> */
-}

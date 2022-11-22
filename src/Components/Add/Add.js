@@ -34,7 +34,6 @@ function Add() {
   const dispatch=useDispatch()
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
-  const [description,SetDescription]=useState('')
   const [post, setPost] = useState({});
   const uploadImage = async () => {
     const formData = new FormData();

@@ -21,7 +21,7 @@ const loggedIn = () => {
       }
     })
   },[])
-  if(auth.authtoken=="loading"){
+  if(auth.authtoken==="loading"){
 return(
   <Box>loading</Box>
 )

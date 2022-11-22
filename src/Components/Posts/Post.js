@@ -15,32 +15,18 @@ import CardActions from "@mui/material/CardActions";
 import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import { red } from "@mui/material/colors";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import {
-  Chat,
-  Favorite,
-  FavoriteBorder,
-  Send,
-  TextFields,
-} from "@mui/icons-material";
+import { Chat, Favorite, FavoriteBorder, Send } from "@mui/icons-material";
 import axios from "../../Axios/axios";
 import { useState } from "react";
-const ExpandMore = styled((props) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme, expand }) => ({
-  transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
-  marginLeft: "auto",
-  transition: theme.transitions.create("transform", {
-    duration: theme.transitions.duration.shortest,
-  }),
-}));
+
 function Post(props) {
-  const [comment,SetComment]=useState('')
-  const [existingComments,setExistingComments]=useState(props.data.comment?props.data.comment:[])
+  const [comment, SetComment] = useState("");
+  const [existingComments, setExistingComments] = useState(
+    props.data.comment ? props.data.comment : []
+  );
   const data = props.data;
-  console.log(existingComments,'comment');
+  console.log(existingComments, "comment");
   const [check, setcheck] = useState(data.likeStatus ? true : false);
   const [likes, setLikes] = useState(data.likes ? data.likes.length : 0);
 
@@ -71,16 +57,19 @@ function Post(props) {
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
-  const sendComment=()=>{
-if(comment!=''){
-    axios.post('/comment',{comment,id:data._id},{headers:{token}}).then((response)=>{
-      
-      setExistingComments([{user:"",text:comment,_id:"22"},...existingComments])
-      SetComment('')
-    })
-  
-  }
-  }
+  const sendComment = () => {
+    if (comment !== "") {
+      axios
+        .post("/comment", { comment, id: data._id }, { headers: { token } })
+        .then((response) => {
+          setExistingComments([
+            { user: {firstName:"Alen"}, text: comment, _id: "22" },
+            ...existingComments,
+          ]);
+          SetComment("");
+        });
+    }
+  };
 
   return (
     <Card
@@ -90,15 +79,26 @@ if(comment!=''){
         width: "100%",
         boxShadow: 2,
         my: 2,
-        borderRadius: 3,
+        borderRadius: 2,
         position: "relative",
-        backgroundColor: "#EDF2F3",
+        backgroundColor: "#e9e9e9",
       }}
       key={data._id}
     >
+      
       <CardHeader
         avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+          <Avatar
+            sx={{
+              width: { md: 36, lg: 56 },
+              height: { md: 36, lg: 56 },
+              border: "solid",
+              borderWidth: "large",
+              borderColor: "#fd1d1d",
+            }}
+            aria-label="recipe"
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzbm7FC9SSCMmtIQDim2nO1rqpoFoGmi6Apw&usqp=CAU"
+          >
             R
           </Avatar>
         }
@@ -107,18 +107,22 @@ if(comment!=''){
             <MoreVertIcon />
           </IconButton>
         }
-        title={data.user.firstName + " " + data.user.LastName}
+        title={data.user.firstName.toUpperCase() + " " + data.user.LastName.toUpperCase()}
         subheader={data.dt}
       />
       {data.description && (
-        <CardContent>
-          <Typography variant="body2" color="text.secondary">
+        // CardContent
+        <Box>
+          <Typography
+            sx={{ marginLeft: "10%" }}
+            variant="body2"
+            color="text.secondary"
+          >
             {data.description}
           </Typography>
-        </CardContent>
+        </Box>
       )}
       <CardMedia
-        sx={{ borderRadius: 2 }}
         component="img"
         width="100%"
         image={`https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/${data.postId}.png`}
@@ -169,6 +173,7 @@ if(comment!=''){
               padding: 1,
               borderRadius: 3,
               boxShadow: 2,
+              backgroundColor: "#a594f9",
             }}
           >
             <TextField
@@ -179,79 +184,77 @@ if(comment!=''){
               variant="standard"
               multiline
               value={comment}
-              onChange={(event)=>{
-                SetComment(event.target.value)
+              onChange={(event) => {
+                SetComment(event.target.value);
               }}
             />
             <IconButton onClick={sendComment}>
               <Send></Send>
             </IconButton>
           </Box>
-          <Box sx={{marginTop:2}}>
-
-            {
-              existingComments[0]?existingComments.map((obj)=>{
-
-
-                return(<Box
-                key={obj._id}
-                  sx={{
-                   
-                    padding: 2,
-                    display: "flex",
-                    height: "auto",
-                    borderRadius: 2,
-                    backgroundColor: "whitesmoke",
-                  }}
-                >
-                  <Avatar
-                    sx={{ width: { md: 20, lg: 40 }, height: { md: 20, lg: 40 } }}
-                    alt="Remy Sharp"
-                    src="/static/images/avatar/1.jpg"
-                  />
+          <Box sx={{ marginTop: 2 }}>
+            {existingComments[0] ? (
+              existingComments.map((obj) => {
+                return (
                   <Box
+                    key={obj._id}
                     sx={{
-                      width: "auto",
-                      maxWidth: "70%",
-                      padding: 1,
+                      padding: 2,
                       display: "flex",
-                      backgroundColor: "#abc4ff",
-                      marginLeft: 1,
+                      height: "auto",
                       borderRadius: 2,
+                      backgroundColor: "whitesmoke",
                     }}
                   >
-                    {obj.text}
+                    <Avatar
+                      sx={{
+                        width: { md: 20, lg: 40 },
+                        height: { md: 20, lg: 40 },
+                      }}
+                      alt="Remy Sharp"
+                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSynTpwWJqxTrCtIzisHRnSXXY_Ep2wuy5DJw&usqp=CAU"
+                    />
+                    <Box
+                      sx={{
+                        width: "auto",
+                        maxWidth: "70%",
+                        padding: 1,
+                        display: "flex",
+                        backgroundColor: "#abc4ff",
+                        marginLeft: 1,
+                        borderRadius: 2,
+                      }}
+                    >{obj.user.firstName+" :"}
+                      {obj.text}
+                    </Box>
                   </Box>
-                </Box>)
-
-              }):<Box
-              sx={{
-               
-                padding: 2,
-                display: "flex",
-                height: "auto",
-                borderRadius: 2,
-                backgroundColor: "whitesmoke",
-              }}
-            >
-          
+                );
+              })
+            ) : (
               <Box
                 sx={{
-                  width: "auto",
-                  maxWidth: "70%",
-                  padding: 1,
+                  padding: 2,
                   display: "flex",
-                  backgroundColor: "#abc4ff",
-                  marginLeft: 1,
+                  height: "auto",
                   borderRadius: 2,
+                  backgroundColor: "whitesmoke",
                 }}
               >
-                No Comments
+                <Box
+                  sx={{
+                    width: "auto",
+                    maxWidth: "70%",
+                    padding: 1,
+                    display: "flex",
+                    backgroundColor: "#abc4ff",
+                    marginLeft: 1,
+                    borderRadius: 2,
+                  }}
+                >
+                  No Comments
+                </Box>
               </Box>
-            </Box>
-            }
-
-      
+            )}
           </Box>
         </CardContent>
       </Collapse>

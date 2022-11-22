@@ -1,12 +1,12 @@
 import { Box, CircularProgress } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Posts from "../Posts/Post";
 import { useSelector } from "react-redux";
 import {} from "../../Redux/PostSlice";
 function feeds() {
   const posts = useSelector((state) => state.post.post);
   return (
-    <Box sx={{ width: { md: "100%", xs: "100%" } ,height:"100vh"}}>
+    <Box sx={{ width: { md: "100%", xs: "100%" } ,minHeight:"100vh",maxHeight:"auto"}}>
       {!posts[0] ? (
         <Box
           sx={{

@@ -1,8 +1,7 @@
 import { Box } from "@mui/material";
 import React from "react";
 import ChatBox from "./ChatBox";
-import UserText from "./UserText";
-import { Outlet } from "react-router-dom";
+
 
 function Messages() {
   return (

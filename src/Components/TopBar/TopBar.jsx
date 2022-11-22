@@ -1,10 +1,6 @@
 import {
   BookmarkBorderOutlined,
-  Chat,
-  CircleNotifications,
-  Explore,
   ExploreOutlined,
-  Home,
   HomeOutlined,
   MessageOutlined,
   NotificationsNoneOutlined,
@@ -14,7 +10,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 function TopBar() {
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   return (
     <Box
       sx={{
@@ -24,18 +20,24 @@ function TopBar() {
         padding: 1,
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,
-       
-        
-        backgroundColor: "#EDF2F3",
+
+        backgroundColor: "#e9e9e9",
       }}
     >
       <Box>
-        <IconButton onClick={()=>{navigate('/home/dash')}}>
-          <HomeOutlined sx={{ color: "#1F3541" }} fontSize="medium"></HomeOutlined>
+        <IconButton
+          onClick={() => {
+            navigate("/home/dash");
+          }}
+        >
+          <HomeOutlined
+            sx={{ color: "#1F3541" }}
+            fontSize="medium"
+          ></HomeOutlined>
         </IconButton>
       </Box>
       <Box>
-        <IconButton >
+        <IconButton>
           <ExploreOutlined
             sx={{ color: "#1F3541" }}
             fontSize="medium"
@@ -44,7 +46,11 @@ function TopBar() {
       </Box>
 
       <Box>
-        <IconButton onClick={()=>{navigate('/home/messages')}}>
+        <IconButton
+          onClick={() => {
+            navigate("/home/messages");
+          }}
+        >
           <MessageOutlined
             sx={{ color: "#1F3541" }}
             fontSize="medium"

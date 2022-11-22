@@ -3,7 +3,7 @@ import { styled } from "@mui/material/styles";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 import React, { useState } from "react";
-import axios from '../../Axios/axios'
+import axios from "../../Axios/axios";
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
     backgroundColor: "#44b700",
@@ -34,14 +34,18 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 function Friends(props) {
   const data = props.data.user;
-  const token=localStorage.getItem('userToken')
+  const token = localStorage.getItem("userToken");
   console.log(data.status);
-  const [followStatus,SetFollowStatus]=useState(data.status==true||data.status==false?data.status:true)
-  const follow=()=>{
-    axios.post('/follow',{userId:data._id},{headers:{token}}).then((response)=>{
-      SetFollowStatus(response.data.status)
-    })
-  }
+  const [followStatus, SetFollowStatus] = useState(
+    data.status === true || data.status === false ? data.status : true
+  );
+  const follow = () => {
+    axios
+      .post("/follow", { userId: data._id }, { headers: { token } })
+      .then((response) => {
+        SetFollowStatus(response.data.status);
+      });
+  };
 
   return (
     <Box
@@ -50,6 +54,8 @@ function Friends(props) {
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
+        
+        width:"100%",
       }}
     >
       <StyledBadge
@@ -58,28 +64,35 @@ function Friends(props) {
         variant="dot"
       >
         <Avatar
-          sx={{ width: { md: 36, lg: 56 }, height: { md: 36, lg: 56 } }}
+          sx={{
+            width: { md: 36, lg: 56 },
+            height: { md: 36, lg: 56 },
+            border: "solid",
+            borderWidth: "large",
+            borderColor: "#fd1d1d",
+            }}
           alt="Remy Sharp"
-          src="/static/images/avatar/1.jpg"
+          src="http://www.goodmorningimagesdownload.com/wp-content/uploads/2021/01/Alone-Very-Nice-Dp.jpg"
         />
       </StyledBadge>
-      <Typography sx={{ marginLeft: 1 }}>{data.firstName} </Typography>
-     
+      <Typography sx={{ marginLeft: 1 }}>
+        {data.firstName.toUpperCase()}{" "}
+      </Typography>
+
       <Typography
-      onClick={follow}
+        onClick={follow}
         sx={{
-          marginLeft: 1,
-          color: "#219ebcs",
+          
+          color: "#14213d",
           borderRadius: 2,
-          backgroundColor: "#8ecae6",
+          backgroundColor: "#a594f9",
           padding: 1,
           fontSize: 11,
           cursor: "pointer",
-          
+          marginLeft:"auto"
         }}
-        
       >
-       {followStatus?"unfollow":"follow"}
+        {followStatus ? "unfollow" : "follow"}
       </Typography>
     </Box>
   );

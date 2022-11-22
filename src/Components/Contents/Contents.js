@@ -2,7 +2,7 @@ import { Box } from '@mui/material'
 import { Stack } from '@mui/system'
 import React from 'react'
 import Feeds from '../Feeds/feeds'
-import RightBar from '../RightBar/rightBar'
+
 function Contents() {
   return (
     <Box width={"100%"} >
