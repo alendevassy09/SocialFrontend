@@ -10,11 +10,12 @@ import { useDispatch } from "react-redux";
 import { postUpdate } from "../../Redux/PostSlice";
 import { useEffect } from "react";
 import axios from "../../Axios/axios";
+import BottomBar from "../BottomBar/BottomBar";
 function Home() {
   const dispatch = useDispatch();
-  let token=localStorage.getItem('userToken')
+  let token = localStorage.getItem("userToken");
   useEffect(() => {
-    axios.get("/getPost",{headers:{token}}).then((response) => {
+    axios.get("/getPost", { headers: { token } }).then((response) => {
       //SetPost(response.data);
       console.log(response);
       dispatch(
@@ -24,18 +25,19 @@ function Home() {
       );
     });
 
-
-    axios.get('/online',{headers:{token,status:true}}).then((response)=>{
-      console.log(response);
-    })
-   
+    axios
+      .get("/online", { headers: { token, status: true } })
+      .then((response) => {
+        console.log(response);
+      });
   }, []);
 
-
-  window.onbeforeunload = function(event) { 
-    axios.get('/online',{headers:{token,status:false}}).then((response)=>{
-      console.log(response);
-    })
+  window.onbeforeunload = function(event) {
+    axios
+      .get("/online", { headers: { token, status: false } })
+      .then((response) => {
+        console.log(response);
+      });
   };
   return (
     <div>
@@ -46,31 +48,49 @@ function Home() {
           <Box sx={{ display: { xs: "none", md: "block" } }} width="34%">
             <SideBar></SideBar>
           </Box>
-          <Box sx={{ width: { md: "32%", xs: "100%" },display:"flex",justifyContent:"center" }}>
+          <Box
+            sx={{
+              width: { lg: "32%",md: "66%", xs: "100%" },
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
             <Box
               sx={{
                 width: { md: "40%", xs: "100%" },
                 position: "fixed",
                 borderBottomLeftRadius: 3,
                 borderBottomRightRadius: 3,
-                zIndex:1,
-                padding:1,
-                
-                display:"flex",
-                justifyContent:"center",
-                
+                zIndex: 1,
+                padding: 1,
+
+                display: { xs: "none", md: "flex" },
+                justifyContent: "center",
               }}
             >
               <TopBar></TopBar>
             </Box>
 
             <Outlet></Outlet>
+            
           </Box>
-          <Box sx={{ display: { xs: "none", md: "block" } }} width="34%">
+          <Box sx={{ display: { xs: "none", md: "none", lg: "block",width:"34%" } }} >
             <RightBar></RightBar>
           </Box>
         </Stack>
         <Add></Add>
+        <Box
+              sx={{
+                position: "fixed",
+                bottom:1,
+                width:"100%",
+                backgroundColor: "#1F3541",
+                zIndex:1,
+                display:{xs: "block", md: "none"}
+              }}
+            >
+              <BottomBar></BottomBar>
+            </Box>
       </Box>
     </div>
   );

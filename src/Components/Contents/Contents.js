@@ -7,6 +7,7 @@ function Contents() {
   return (
     <Box width={"100%"} >
       <Stack width={"100%"} sx={{marginTop:{md:8}}} spacing={{md:3}} justifyContent="space-between">
+
       <Feeds></Feeds>
        {/* <RightBar></RightBar> */}
         </Stack>

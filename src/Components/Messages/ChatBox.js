@@ -16,22 +16,21 @@ function ChatBox() {
   const [totalMsg, setTotalMsg] = useState([]);
   const [msg, SetMsg] = useState("");
   const [room, SetRoom] = useState("1");
+
   useEffect(() => {
     axios
       .get("/chat", { headers: { token, touser: toUser._id } })
       .then((response) => {
         setTotalMsg(response.data.chat);
-        console.log("mgs---------");
-        console.log(response);
+        
+        console.log(response.data.unread);
 
         socket.emit("join", response.data.room);
         SetRoom(response.data.room);
-        console.log("mgs---------");
       });
   }, []);
 
   const sendMessage = async () => {
-    console.log(sentMsg, "----");
     SetSentMsg([...sentMsg, msg]);
     const sendMessage = {
       message: msg,
@@ -45,7 +44,7 @@ function ChatBox() {
 
     await socket.emit("send_message", sendMessage);
     setTotalMsg([{ sendMessage }, ...totalMsg]);
-    SetMsg("");
+    // SetMsg("");
   };
 
   useEffect(() => {
@@ -60,10 +59,20 @@ function ChatBox() {
   }, [socket]);
 
   useEffect(() => {
+    
+    const gotMessage = {
+      message: msg,
+      author: "alen",
+      room: room,
+      time:
+        new Date(Date.now()).getHours() +
+        ":" +
+        new Date(Date.now()).getMinutes(),
+    };
     axios
       .post(
         "/chatCreate",
-        { messages: totalMsg },
+        { messages: totalMsg, to: gotMessage },
         { headers: { token, touser: toUser._id } }
       )
       .then((response) => {
@@ -71,11 +80,8 @@ function ChatBox() {
         // let room = 123;
         //SetRoom(response.data.room)
       });
+    SetMsg("");
   }, [totalMsg]);
-  useEffect(() => {
-    //socket.emit("join", room);
-  }, [room]);
-
   return (
     <Box
       sx={{
@@ -86,8 +92,8 @@ function ChatBox() {
         borderRadius: 3,
       }}
     >
-      <Box sx={{display:"none"}}>{gotMsg}</Box>
-      <Box 
+      <Box sx={{ display: "none" }}>{gotMsg}</Box>
+      <Box
         sx={{
           marginTop: 1,
           display: "flex",
@@ -144,7 +150,7 @@ function ChatBox() {
           }}
         >
           {totalMsg.map((obj) => {
-            if (obj.sendMessage) {
+            if (obj.sendMessage&&obj.sendMessage.message!=='') {
               return (
                 <Box
                   sx={{
@@ -175,7 +181,7 @@ function ChatBox() {
                   </Box>
                 </Box>
               );
-            } else if (obj.gotMessage) {
+            } else if (obj.gotMessage&&obj.gotMessage.message!=='') {
               return (
                 <Box
                   sx={{
@@ -206,12 +212,46 @@ function ChatBox() {
                   </Box>
                 </Box>
               );
-            }else{
-              return (
-                <Box></Box>
-              )
+            } else {
+              return <Box></Box>;
             }
           })}
+          
+          {/* {unread[0]
+            ? unread.map((obj) => {
+                return (
+                  <Box
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "start",
+                    }}
+                  >
+                    
+                    <Box
+                      sx={{
+                        marginTop: 1,
+                        maxWidth: "50%",
+                        padding: 1,
+                        borderRadius: 3,
+                        backgroundColor: "#ccd5ae",
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <Box>
+                        <Typography variant="h6">
+                          {obj.gotMessage.message}
+                        </Typography>
+                      </Box>
+                      <Box>
+                        <small>{obj.gotMessage.time}</small>
+                      </Box>
+                    </Box>
+                  </Box>
+                );
+              })
+            : ""} */}
         </Box>
         <Box>
           <Box

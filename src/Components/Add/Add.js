@@ -13,11 +13,14 @@ import {
 import React from "react";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
-import { Image } from "@mui/icons-material";
+import { Camera, Image } from "@mui/icons-material";
 import axiosImage from "../../Axios/ImageUpload";
 import axios from "../../Axios/axios";
 import { postAdd } from "../../Redux/PostSlice";
 import { useDispatch } from "react-redux";
+import VideoCameraBackIcon from "@mui/icons-material/VideoCameraBack";
+import SlowMotionVideoIcon from "@mui/icons-material/SlowMotionVideo";
+import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
 const StyledModal = styled(Modal)({
   display: "flex",
   justifyContent: "center",
@@ -31,32 +34,73 @@ const UserBox = styled(Box)({
   marginBottom: "20px",
 });
 function Add() {
-  const dispatch=useDispatch()
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const [post, setPost] = useState({});
+  const [status, setStatus] = useState({});
+
   const uploadImage = async () => {
-    const formData = new FormData();
-    formData.append("file", post);
-    formData.append("upload_preset", "wnwycvqk");
-    formData.append("api_key", "299429838137541");
-    const token=localStorage.getItem('userToken')
-    axiosImage
-      .post("/image/upload", formData)
-      .then((response) => {
-        console.log(response);
-        return axios.post("/post", { postId: response.data.public_id ,description:value},{headers:{token:token}});
-      })
-      .then((response) => {
-        console.log(response);
-        
-        dispatch(
-          postAdd({
-            post:response.data
-          })
-        )
-        setOpen(false);
-      });
+    console.log("1");
+    console.log(post);
+    console.log(status);
+        if (Object.keys(post).length !== 0) {
+      console.log("2");
+      const formData = new FormData();
+      formData.append("file", post);
+      formData.append("upload_preset", "wnwycvqk");
+      formData.append("api_key", "299429838137541");
+      const token = localStorage.getItem("userToken");
+      axiosImage
+        .post("/image/upload", formData)
+        .then((response) => {
+          console.log(response);
+          return axios.post(
+            "/post",
+            { postId: response.data.public_id, description: value },
+            { headers: { token: token } }
+          );
+        })
+        .then((response) => {
+          console.log(response);
+
+          dispatch(
+            postAdd({
+              post: response.data,
+            })
+          );
+          setOpen(false);
+        });
+    } else if (
+      !Object.keys(status).length !== 0
+    ) {
+      console.log("3");
+      const formData = new FormData();
+      formData.append("file", status);
+      formData.append("upload_preset", "fsqivseb");
+      formData.append("api_key", "299429838137541");
+      const token = localStorage.getItem("userToken");
+      axiosImage
+        .post("/image/upload", formData)
+        .then((response) => {
+          console.log(response);
+          // return axios.post(
+          //   "/post",
+          //   { postId: response.data.public_id, description: value },
+          //   { headers: { token: token } }
+          // );
+        })
+        // .then((response) => {
+        //   console.log(response);
+
+        //   dispatch(
+        //     postAdd({
+        //       post: response.data,
+        //     })
+        //   );
+        //   setOpen(false);
+        // });
+    }
   };
   return (
     <>
@@ -67,9 +111,9 @@ function Add() {
         title="New Post"
         sx={{
           position: "fixed",
-          bottom: 20,
+          bottom: { xs: 1, md: 20 },
           left: { xs: "calc(50% - 25px)", md: 30 },
-          backgroundColor:"#1F3541"
+          backgroundColor: "#1F3541",
         }}
       >
         <Fab color="primary" aria-label="add">
@@ -86,7 +130,7 @@ function Add() {
       >
         <Box width={400} height={280} bgcolor="white" borderRadius={5} p={3}>
           <Typography variant="h6" color="grey" textAlign="center">
-            Create Post
+            Create
           </Typography>
           <UserBox>
             <Avatar src="" alt="R" sx={{ width: 30, height: 30 }} />
@@ -94,24 +138,67 @@ function Add() {
               Alen Devassy
             </Typography>
           </UserBox>
-          <Box>
-            <IconButton
-              color="primary"
-              aria-label="upload picture"
-              component="label"
-              size="large"
-              sx={{backgroundColor:"pink"}}
+          <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
+            <Box
+              sx={{ display: "flex", justifyContent: "center", width: "33.3%" }}
             >
-              <input
-                onChange={(e) => {
-                  setPost(e.target.files[0]);
-                }}
-                hidden
-                accept="image/*"
-                type="file"
-              />
-              <Image style={{ color: "red" }} />
-            </IconButton>
+              <IconButton
+                color="primary"
+                aria-label="upload picture"
+                component="label"
+                size="large"
+                sx={{ backgroundColor: "pink" }}
+              >
+                <input
+                  onChange={(e) => {
+                    setStatus({});
+                    setPost(e.target.files[0]);
+                  }}
+                  hidden
+                  accept="image/*,video/*"
+                  type="file"
+                />
+                <VideoCameraBackIcon style={{ color: "red" }} />
+              </IconButton>
+              <Typography sx={{ my: "auto" }}>photo/video</Typography>
+            </Box>
+            <Box
+              sx={{ display: "flex", justifyContent: "center", width: "33.3%" }}
+            >
+              <IconButton
+                color="primary"
+                aria-label="upload picture"
+                component="label"
+                size="large"
+                sx={{ backgroundColor: "pink" }}
+              >
+                <input
+                  onChange={(e) => {
+                    setPost({});
+                    setStatus(e.target.files[0]);
+                  }}
+                  hidden
+                  accept="image/*,video/*"
+                  type="file"
+                />
+                <SlowMotionVideoIcon style={{ color: "red" }} />
+              </IconButton>
+              <Typography sx={{ my: "auto" }}>Status</Typography>
+            </Box>
+            <Box
+              sx={{ display: "flex", justifyContent: "center", width: "33.3%" }}
+            >
+              <IconButton
+                color="primary"
+                aria-label="upload picture"
+                component="label"
+                size="large"
+                sx={{ backgroundColor: "pink" }}
+              >
+                <SentimentVerySatisfiedIcon style={{ color: "red" }} />
+              </IconButton>
+              <Typography sx={{ my: "auto" }}>Write</Typography>
+            </Box>
           </Box>
           <Box sx={{ marginTop: 2 }}>
             <TextField
@@ -126,7 +213,11 @@ function Add() {
               }}
             />
           </Box>
-          <Box marginTop={2} width={"100%"} sx={{display:"flex",justifyContent:"center"}}>
+          <Box
+            marginTop={2}
+            width={"100%"}
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
             <Button onClick={uploadImage} variant="contained">
               Post
             </Button>

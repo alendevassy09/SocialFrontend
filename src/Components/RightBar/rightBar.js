@@ -76,8 +76,10 @@ function rightBar() {
             horizontal: "right",
           }}
         >
-          <MenuItem>Profile</MenuItem>
-          <MenuItem>My account</MenuItem>
+          <MenuItem onClick={()=>{
+            console.log("profile");
+            navigate("/home/profile")
+          }}>Profile</MenuItem>
           <MenuItem
             onClick={() => {
               localStorage.removeItem("userToken");
