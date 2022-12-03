@@ -7,29 +7,29 @@ import { useState } from "react";
 import axios from "../../Axios/axios";
 import { useEffect } from "react";
 import { FollowersUpdate } from "../../Redux/FollowersSlice";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 function SideBar() {
   const following = useSelector((state) => state.following.Followers);
-  const dispatch=useDispatch()  
+  const dispatch = useDispatch();
   let token = localStorage.getItem("userToken");
   const navigate = useNavigate();
   const [searchResult, setSearchResult] = useState([]);
-  const [empty,setEmpty]=useState(false)
+  const [empty, setEmpty] = useState(false);
 
   useEffect(() => {
     axios.get("/getFriends", { headers: { token } }).then((response) => {
-      console.log(response.data,'-=-=-');
       dispatch(
         FollowersUpdate({
-          Followers:response.data
+          Followers: response.data,
         })
-      )
+      );
     });
   }, []);
 
   const doSearch = (event) => {
+    
     axios
-      .get("/search", { headers: { name: event.target.value, token: token } })
+      .get("/search", { headers: { name: event.target.value.trim(), token: token } })
       .then((response) => {
         if (response.data.status === false) {
           console.log(response);
@@ -39,14 +39,14 @@ function SideBar() {
           console.log(response.data);
           if (event.target.value !== "") {
             setSearchResult(response.data);
-            if(!response.data[0]){
-              setEmpty(true)
-             }else{
-              setEmpty(false)
-             }
+            if (!response.data[0]) {
+              setEmpty(true);
+            } else {
+              setEmpty(false);
+            }
           } else {
             setSearchResult([]);
-            setEmpty(false)
+            setEmpty(false);
           }
         }
       });
@@ -58,13 +58,12 @@ function SideBar() {
         width: "100%",
         height: "90vh",
         justifyContent: "end",
-        
       }}
     >
       <Box
         sx={{
           backgroundColor: "#e9e9e9",
-          color:"black",
+          color: "black",
           width: "24%",
           height: "90%",
           position: "fixed",
@@ -76,7 +75,6 @@ function SideBar() {
           flexDirection: "column",
           alignItems: "center",
           padding: 3,
-          
         }}
       >
         <Box
@@ -103,9 +101,8 @@ function SideBar() {
               onChange={doSearch}
             ></TextField>
           </Box>
-          
         </Box>
-        {empty? <p>No Results Found</p>:""}
+        {empty ? <p>No Results Found</p> : ""}
         {!searchResult[0] ? (
           <Box sx={{ width: "80%", marginTop: 2 }}>
             <Box sx={{ width: "100%" }}>
@@ -114,21 +111,57 @@ function SideBar() {
             <Box sx={{ width: "100%", borderTop: 1, marginTop: 2 }}>
               {following[0]
                 ? following.map((obj) => {
-                  
-                    return <Friends key={obj._id} data={{user:obj.user}}></Friends>;
+                    return (
+                      <Friends
+                        key={obj._id}
+                        data={{ user: obj.user }}
+                      ></Friends>
+                    );
                   })
                 : "You are not following anyone"}
             </Box>
           </Box>
-        ) : (
+        ) : !searchResult.length > 6 ? (
           <Box sx={{ width: "80%", marginTop: 2 }}>
             <Box sx={{ width: "100%" }}>
               <Typography variant="h5">From Search</Typography>
             </Box>
-            <Box sx={{ width: "100%", borderTop: 1, marginTop: 2 }}>
+            <Box
+              sx={{ width: "100%", height: "80%", borderTop: 1, marginTop: 2 }}
+            >
               {searchResult.map((obj) => {
-                
-                return <Friends key={obj._id} data={{user:obj}}></Friends>;
+                return <Friends key={obj._id} data={{ user: obj }}></Friends>;
+              })}
+            </Box>
+          </Box>
+        ) : (
+          <Box
+            sx={{
+              width: "80%",
+              overflowX: "hidded",
+              overflow: "scroll",
+              marginTop: 2,
+              "&::-webkit-scrollbar": {
+                width: "5px",
+              },
+
+              "&::-webkit-scrollbar-track": {
+                boxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+                webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "rgba(0,0,0,.1)",
+              },
+            }}
+          >
+            <Box sx={{ width: "100%" }}>
+              <Typography variant="h5">From Search</Typography>
+            </Box>
+            <Box
+              sx={{ width: "100%", height: "80%", borderTop: 1, marginTop: 2 }}
+            >
+              {searchResult.map((obj) => {
+                return <Friends key={obj._id} data={{ user: obj }}></Friends>;
               })}
             </Box>
           </Box>
@@ -139,4 +172,3 @@ function SideBar() {
 }
 
 export default SideBar;
-

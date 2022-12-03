@@ -1,25 +1,48 @@
-import {
-  Avatar,
-  Box,
-  Menu,
-  MenuItem,
-  Typography,
-} from "@mui/material";
+import { Avatar, Box, Menu, MenuItem, Typography } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Suggested from "./Suggested";
 import { useState } from "react";
+import axios from "../../Axios/axios";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { suggestedUpdate } from "../../Redux/SuggestedSlice";
 function rightBar() {
+  let userData = JSON.parse(localStorage.getItem("userData"));
+  const token = localStorage.getItem("userToken");
+  const suggested = useSelector((state) => state.suggested.suggested);
+  console.log("this is the redux suggested", suggested);
+  const dispatch = useDispatch();
   const [openMenu, setOpen] = useState(false);
+  const [firstName] = useState(
+    userData.firstName.charAt(0).toUpperCase() + userData.firstName.slice(1)
+  );
+  const [lastName] = useState(
+    userData.LastName.charAt(0).toUpperCase() + userData.LastName.slice(1)
+  );
+  //const [notFollowed, setNotFollowed] = useState([]);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    axios
+      .get("/notFollowed", { headers: { token: token } })
+      .then((response) => {
+        console.log("not followed", response.data);
+        //setNotFollowed(response.data);
+        dispatch(
+          suggestedUpdate({
+            suggested: response.data,
+          })
+        );
+      });
+  }, []);
   return (
     <Box
       sx={{
         display: { xs: "none", sm: "flex" },
         width: "100%",
         height: "90vh",
-        
+
         justifyContent: "start",
       }}
     >
@@ -52,14 +75,18 @@ function rightBar() {
             display="flex"
             alignItems={"center"}
             justifyContent="space-around"
-            width={"66%"}
+            width={"63%"}
           >
+            
+            <Box display={"flex"} alignItems="center" onClick={(e) => setOpen(true)}>
             <Avatar
+            sx={{marginRight:1}}
               onClick={(e) => setOpen(true)}
               alt="Remy Sharp"
-              src="/static/images/avatar/1.jpg"
+              src={`https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/${userData.profile}.png`}
             />
-            <Box onClick={(e) => setOpen(true)}>Alen Devassy</Box>
+              {firstName + " " + lastName}
+            </Box>
           </Box>
         </Box>
         <Menu
@@ -76,10 +103,14 @@ function rightBar() {
             horizontal: "right",
           }}
         >
-          <MenuItem onClick={()=>{
-            console.log("profile");
-            navigate("/home/profile")
-          }}>Profile</MenuItem>
+          <MenuItem
+            onClick={() => {
+              console.log("profile");
+              navigate("/home/profile");
+            }}
+          >
+            Profile
+          </MenuItem>
           <MenuItem
             onClick={() => {
               localStorage.removeItem("userToken");
@@ -93,9 +124,14 @@ function rightBar() {
           <Typography variant="h5">Suggested</Typography>
         </Box>
         <Box sx={{ width: "80%", borderTop: 1, marginTop: 2 }}>
+          {Array.isArray(suggested) && suggested.length
+            ? suggested.slice(1).map((obj) => {
+                return <Suggested data={obj}></Suggested>;
+              })
+            : "Please Wait...."}
+          {/* <Suggested></Suggested>
             <Suggested></Suggested>
-            <Suggested></Suggested>
-            <Suggested></Suggested>
+            <Suggested></Suggested> */}
         </Box>
       </Box>
     </Box>

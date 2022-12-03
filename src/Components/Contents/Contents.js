@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
 import { Stack } from '@mui/system'
 import React from 'react'
-import Feeds from '../Feeds/feeds'
+import Feeds from '../Feeds/Feeds'
 
 function Contents() {
   return (

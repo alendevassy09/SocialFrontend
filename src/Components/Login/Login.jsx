@@ -72,8 +72,7 @@ function Login() {
       if (response.data.user) {
         if (response.data.password) {
           console.log(response.data.userData._id);
-          
-
+          localStorage.setItem('userData', JSON.stringify(response.data.userData))
           dispatch(
             update({
               userId: response.data.userData._id,

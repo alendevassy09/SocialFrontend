@@ -4,6 +4,8 @@ import {
   Box,
   Checkbox,
   Collapse,
+  Menu,
+  MenuItem,
   styled,
   TextField,
 } from "@mui/material";
@@ -19,16 +21,19 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Chat, Favorite, FavoriteBorder, Send } from "@mui/icons-material";
 import axios from "../../Axios/axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Fade from "@mui/material/Fade";
 
 function Post(props) {
+  let navigate = useNavigate();
   const [comment, SetComment] = useState("");
   const [existingComments, setExistingComments] = useState(
     props.data.comment ? props.data.comment : []
   );
   const data = props.data;
-  console.log(existingComments, "comment");
   const [check, setcheck] = useState(data.likeStatus ? true : false);
   const [likes, setLikes] = useState(data.likes ? data.likes.length : 0);
+  const [openMenu, setOpen] = useState(false);
 
   const token = localStorage.getItem("userToken");
 
@@ -63,53 +68,143 @@ function Post(props) {
         .post("/comment", { comment, id: data._id }, { headers: { token } })
         .then((response) => {
           setExistingComments([
-            { user: {firstName:"Alen"}, text: comment, _id: "22" },
+            { user: { firstName: "Alen" }, text: comment, _id: "22" },
             ...existingComments,
           ]);
           SetComment("");
         });
     }
   };
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const [save, setSave] = useState(data.save);
+  const [location,setLocation]=useState('profile')
+  const Close=()=>{
+    setAnchorEl(null);
+  }
+  function handleClose  (id){
+    try {
+      if(id){axios
+        .patch("/save", { post: id }, { headers: { token: token } })
+        .then((response) => {
+    
+          
+          console.log(data);
+          setAnchorEl(null);
+          setSave(save?false:true)
+        })}else{
+          setAnchorEl(null);
+        }
+      
+    } catch (error) {
+      console.log(error);
+    }
+  
+  };
 
   return (
     <Card
+     
       id={data._id}
       sx={{
         marginBottom: { md: 2 },
         width: "100%",
         boxShadow: 2,
-        my: 2,
+
         borderRadius: 2,
         position: "relative",
         backgroundColor: "#e9e9e9",
       }}
       key={data._id}
     >
-      
       <CardHeader
         avatar={
           <Avatar
             sx={{
               width: { md: 36, lg: 56 },
               height: { md: 36, lg: 56 },
-              border: "solid",
-              borderWidth: "large",
-              borderColor: "#fd1d1d",
+              //border: "solid",
+              // borderWidth: "large",
+              // borderColor: "#fd1d1d",
+              position: "relative",
             }}
             aria-label="recipe"
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzbm7FC9SSCMmtIQDim2nO1rqpoFoGmi6Apw&usqp=CAU"
+            src={
+              !data.user.profile
+                ? "https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/profile_pic/tyye6ctzdt8c9qqhegdj.png"
+                : `https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/${data.user.profile}.png`
+            }
           >
             R
           </Avatar>
         }
-        action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
+        action={location=='profile'?
+          <div>
+            <IconButton
+              id="fade-button"
+              aria-controls={open ? "fade-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+              onClick={handleClick}
+              aria-label="settings"
+            >
+              <MoreVertIcon />
+            </IconButton>
+            <Menu
+              id="fade-menu"
+              MenuListProps={{
+                "aria-labelledby": "fade-button",
+              }}
+              anchorEl={anchorEl}
+              open={open}
+              onClose={Close}
+              TransitionComponent={Fade}
+            >
+              
+                <MenuItem
+                  onClick={() => {
+                    handleClose(data._id);
+                  }}
+                >
+                  {save?"Remove":"Save"}
+                </MenuItem>
+            </Menu>
+          </div>
+        :<div>
+        <IconButton
+          id="fade-button"
+          aria-controls={open ? "fade-menu" : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? "true" : undefined}
+          onClick={handleClick}
+          aria-label="settings"
+        >
+          <MoreVertIcon />
+        </IconButton>
+        <Menu
+          id="fade-menu"
+          MenuListProps={{
+            "aria-labelledby": "fade-button",
+          }}
+          anchorEl={anchorEl}
+          open={open}
+          onClose={Close}
+          TransitionComponent={Fade}
+        >
+          <MenuItem>Delete</MenuItem>
+        </Menu>
+      </div>}
+        title={
+          data.user.firstName.toUpperCase() +
+          " " +
+          data.user.LastName.toUpperCase()
         }
-        title={data.user.firstName.toUpperCase() + " " + data.user.LastName.toUpperCase()}
         subheader={data.dt}
       />
+
       {data.description && (
         // CardContent
         <Box>
@@ -224,7 +319,8 @@ function Post(props) {
                         marginLeft: 1,
                         borderRadius: 2,
                       }}
-                    >{obj.user.firstName+" :"}
+                    >
+                      {obj.user.firstName + " :"}
                       {obj.text}
                     </Box>
                   </Box>

@@ -13,7 +13,6 @@ import {
 import React from "react";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
-import { Camera, Image } from "@mui/icons-material";
 import axiosImage from "../../Axios/ImageUpload";
 import axios from "../../Axios/axios";
 import { postAdd } from "../../Redux/PostSlice";
@@ -39,12 +38,12 @@ function Add() {
   const [value, setValue] = useState("");
   const [post, setPost] = useState({});
   const [status, setStatus] = useState({});
-
+  const [option, setOption] = useState(0);
   const uploadImage = async () => {
     console.log("1");
     console.log(post);
     console.log(status);
-        if (Object.keys(post).length !== 0) {
+    if (option === 1) {
       console.log("2");
       const formData = new FormData();
       formData.append("file", post);
@@ -71,8 +70,9 @@ function Add() {
           );
           setOpen(false);
         });
-    } else if (
-      !Object.keys(status).length !== 0
+    }
+    else if (
+      option===2
     ) {
       console.log("3");
       const formData = new FormData();
@@ -84,22 +84,22 @@ function Add() {
         .post("/image/upload", formData)
         .then((response) => {
           console.log(response);
-          // return axios.post(
-          //   "/post",
-          //   { postId: response.data.public_id, description: value },
-          //   { headers: { token: token } }
-          // );
+          return axios.post(
+            "/statusUpdate",
+            { storyId: response.data.public_id, description: value },
+            { headers: { token: token } }
+          );
         })
-        // .then((response) => {
-        //   console.log(response);
+        .then((response) => {
+          console.log(response);
 
-        //   dispatch(
-        //     postAdd({
-        //       post: response.data,
-        //     })
-        //   );
-        //   setOpen(false);
-        // });
+          // dispatch(
+          //   postAdd({
+          //     post: response.data,
+          //   })
+          // );
+           setOpen(false);
+        });
     }
   };
   return (
@@ -112,7 +112,7 @@ function Add() {
         sx={{
           position: "fixed",
           bottom: { xs: 1, md: 20 },
-          left: { xs: "calc(50% - 25px)", md: 30 },
+          left: { xs: "calc(49% - 25px)", md: 30 },
           backgroundColor: "#1F3541",
         }}
       >
@@ -151,11 +151,12 @@ function Add() {
               >
                 <input
                   onChange={(e) => {
+                    setOption(1);
                     setStatus({});
                     setPost(e.target.files[0]);
                   }}
                   hidden
-                  accept="image/*,video/*"
+                  accept="image/*"
                   type="file"
                 />
                 <VideoCameraBackIcon style={{ color: "red" }} />
@@ -173,12 +174,14 @@ function Add() {
                 sx={{ backgroundColor: "pink" }}
               >
                 <input
-                  onChange={(e) => {
+                  onChange={async(e) => {
+                    setOption(2);
                     setPost({});
+                    
                     setStatus(e.target.files[0]);
                   }}
                   hidden
-                  accept="image/*,video/*"
+                  accept="image/*"
                   type="file"
                 />
                 <SlowMotionVideoIcon style={{ color: "red" }} />

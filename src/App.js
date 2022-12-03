@@ -8,7 +8,9 @@ import LoggedIn from "./Utils/LoggedIn";
 import NotLoggedIn from "./Utils/NotLoggedIn";
 import Messages from "./Components/Messages/Messages";
 import UserChats from "./Components/Messages/UserChats";
+import Trending from "./Components/Trending/Trending";
 import Profile from "./Components/Profile/Profile";
+import Saved from "./Components/Saved/Saved"
 function App() {
   return (
     <div className="App">
@@ -23,9 +25,11 @@ function App() {
               <Route index element={<Navigate to="dash" />}></Route>
 
               <Route path="dash" index element={<Contents />} />
+              <Route path="trending" index element={<Trending />} />
               <Route path="messages" index element={<Messages />} />
               <Route path="chat" index element={<UserChats />} />
               <Route path="profile" index element={<Profile />} />
+              <Route path="saved" index element={<Saved />} />
             </Route>
           </Route>
         </Routes>

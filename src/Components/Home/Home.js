@@ -2,12 +2,13 @@ import React from "react";
 // import Header from "../Header/Header";
 import SideBar from "../SideBar/SideBar";
 import TopBar from "../TopBar/TopBar";
-import RightBar from "../RightBar/rightBar";
+import RightBar from "../RightBar/RightBar";
 import { Box, Stack } from "@mui/material";
 import Add from "../Add/Add";
 import { Outlet } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { postUpdate } from "../../Redux/PostSlice";
+import { storyUpdate } from "../../Redux/StorySlice";
 import { useEffect } from "react";
 import axios from "../../Axios/axios";
 import BottomBar from "../BottomBar/BottomBar";
@@ -17,7 +18,6 @@ function Home() {
   useEffect(() => {
     axios.get("/getPost", { headers: { token } }).then((response) => {
       //SetPost(response.data);
-      console.log(response);
       dispatch(
         postUpdate({
           post: response.data,
@@ -25,20 +25,27 @@ function Home() {
       );
     });
 
-    axios
-      .get("/online", { headers: { token, status: true } })
-      .then((response) => {
-        console.log(response);
-      });
+    // axios
+    //   .get("/online", { headers: { token, status: true } })
+    //   .then((response) => {
+    //   });
+      axios.get('/getStory',{ headers: { token } }).then((response)=>{
+        console.log("this ths story from home",response.data);
+        dispatch(
+          storyUpdate({
+            story: response.data,
+          })
+        );
+      })
   }, []);
 
-  window.onbeforeunload = function(event) {
-    axios
-      .get("/online", { headers: { token, status: false } })
-      .then((response) => {
-        console.log(response);
-      });
-  };
+  // window.onbeforeunload = function(event) {
+  //   axios
+  //     .get("/online", { headers: { token, status: false } })
+  //     .then((response) => {
+  //       (response);
+  //     });
+  // };
   return (
     <div>
       <Box sx={{ backgroundColor: "#f1faee" }}>
