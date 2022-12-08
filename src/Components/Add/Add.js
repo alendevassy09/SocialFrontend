@@ -35,6 +35,8 @@ const UserBox = styled(Box)({
 function Add() {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
+  const [write,setWrite]=useState(true)
+  const [image, setImage] = useState();
   const [value, setValue] = useState("");
   const [post, setPost] = useState({});
   const [status, setStatus] = useState({});
@@ -70,10 +72,7 @@ function Add() {
           );
           setOpen(false);
         });
-    }
-    else if (
-      option===2
-    ) {
+    } else if (option === 2) {
       console.log("3");
       const formData = new FormData();
       formData.append("file", status);
@@ -98,7 +97,23 @@ function Add() {
           //     post: response.data,
           //   })
           // );
-           setOpen(false);
+          setOpen(false);
+        });
+    }else if (option === 3) {
+      const token = localStorage.getItem("userToken");
+      axios.post(
+            "/post",
+            { description: value },
+            { headers: { token: token } }
+          ).then((response) => {
+          console.log(response);
+          console.log(value);
+          setOpen(false);
+           dispatch(
+            postAdd({
+              post: response.data,
+            })
+          );
         });
     }
   };
@@ -128,7 +143,14 @@ function Add() {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box width={400} height={280} bgcolor="white" borderRadius={5} p={3}>
+        <Box
+          width={400}
+          minHeight={280}
+          maxHeight={500}
+          bgcolor="white"
+          borderRadius={5}
+          p={3}
+        >
           <Typography variant="h6" color="grey" textAlign="center">
             Create
           </Typography>
@@ -153,7 +175,9 @@ function Add() {
                   onChange={(e) => {
                     setOption(1);
                     setStatus({});
+                    setImage(URL.createObjectURL(e.target.files[0]));
                     setPost(e.target.files[0]);
+                    setWrite(true)
                   }}
                   hidden
                   accept="image/*"
@@ -174,11 +198,12 @@ function Add() {
                 sx={{ backgroundColor: "pink" }}
               >
                 <input
-                  onChange={async(e) => {
+                  onChange={async (e) => {
                     setOption(2);
                     setPost({});
-                    
+                    setImage(URL.createObjectURL(e.target.files[0]));
                     setStatus(e.target.files[0]);
+                    setWrite(true)
                   }}
                   hidden
                   accept="image/*"
@@ -197,16 +222,28 @@ function Add() {
                 component="label"
                 size="large"
                 sx={{ backgroundColor: "pink" }}
+                onClick={()=>{
+                  setPost({});
+                  setStatus({})
+                  setImage()
+                  setOption(3)
+                  setWrite(false)
+                  
+                }}
               >
                 <SentimentVerySatisfiedIcon style={{ color: "red" }} />
               </IconButton>
               <Typography sx={{ my: "auto" }}>Write</Typography>
             </Box>
           </Box>
+          <Box sx={{width:"100%",display:"flex",justifyContent:"center",marginTop:1}}>
+
+            {write?<img height={image?"150px":''} src={image} alt="" />:"Write Something"}
+          </Box>
           <Box sx={{ marginTop: 2 }}>
             <TextField
               id="outlined-multiline-flexible"
-              label="Description"
+              label={write?"description":"write"}
               multiline
               fullWidth
               maxRows={4}
@@ -221,7 +258,7 @@ function Add() {
             width={"100%"}
             sx={{ display: "flex", justifyContent: "center" }}
           >
-            <Button onClick={uploadImage} variant="contained">
+            <Button onClick={()=>uploadImage()} variant="contained">
               Post
             </Button>
           </Box>

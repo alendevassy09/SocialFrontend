@@ -1,23 +1,25 @@
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, CircularProgress, TextField, Typography } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Search } from "@mui/icons-material";
-import Friends from "../Friends/Friends";
+import Friends from "../../Friends/Friends";
 import { useState } from "react";
-import axios from "../../Axios/axios";
+import axios from "../../../Axios/axios";
 import { useEffect } from "react";
-import { FollowersUpdate } from "../../Redux/FollowersSlice";
+import { FollowersUpdate } from "../../../Redux/FollowersSlice";
 import { useSelector, useDispatch } from "react-redux";
-function SideBar() {
+function SideBar(props) {
+  let data = props.data;
   const following = useSelector((state) => state.following.Followers);
   const dispatch = useDispatch();
   let token = localStorage.getItem("userToken");
   const navigate = useNavigate();
   const [searchResult, setSearchResult] = useState([]);
   const [empty, setEmpty] = useState(false);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     axios.get("/getFriends", { headers: { token } }).then((response) => {
+      setLoading(false);
       dispatch(
         FollowersUpdate({
           Followers: response.data,
@@ -27,9 +29,10 @@ function SideBar() {
   }, []);
 
   const doSearch = (event) => {
-    
     axios
-      .get("/search", { headers: { name: event.target.value.trim(), token: token } })
+      .get("/search", {
+        headers: { name: event.target.value.trim(), token: token },
+      })
       .then((response) => {
         if (response.data.status === false) {
           console.log(response);
@@ -54,27 +57,30 @@ function SideBar() {
   return (
     <Box
       sx={{
-        display: { xs: "none", sm: "flex" },
+        display: data.home
+          ? { xs: "none", sm: "flex" }
+          : { xs: "flex", md: "none" },
         width: "100%",
         height: "90vh",
         justifyContent: "end",
       }}
     >
+      {/* <ProfileModal></ProfileModal> */}
       <Box
         sx={{
           backgroundColor: "#e9e9e9",
           color: "black",
-          width: "24%",
+          width: data.home ? "24%" : "100%",
           height: "90%",
           position: "fixed",
-          marginLeft: { lg: 3, md: 1 },
-          marginTop: 1.5,
-          borderTopLeftRadius: 20,
-          borderBottomLeftRadius: 20,
+          marginLeft: data.home ? { lg: 3, md: 1 } : 0,
+          marginTop: data.home ? 1.5 : 0,
+          borderTopLeftRadius: data.home ? 20 : 0,
+          borderBottomLeftRadius: data.home ? 20 : 0,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          padding: 3,
+          padding: data.home ? 3 : 0,
         }}
       >
         <Box
@@ -88,6 +94,7 @@ function SideBar() {
             justifyContent: "center",
             cursor: "pointer",
             flexDirection: "column",
+            marginTop: data.home ? 0 : 1,
           }}
         >
           <Box sx={{ height: 50, display: "flex", alignItems: "center" }}>
@@ -109,16 +116,17 @@ function SideBar() {
               <Typography variant="h5">Following</Typography>
             </Box>
             <Box sx={{ width: "100%", borderTop: 1, marginTop: 2 }}>
-              {following[0]
-                ? following.map((obj) => {
-                    return (
-                      <Friends
-                        key={obj._id}
-                        data={{ user: obj.user }}
-                      ></Friends>
-                    );
-                  })
-                : "You are not following anyone"}
+              {following[0] ? (
+                following.map((obj) => {
+                  return (
+                    <Friends key={obj._id} data={{ user: obj.user }}></Friends>
+                  );
+                })
+              ) : loading ? (
+                <CircularProgress sx={{marginLeft:"45%",marginTop:3}} />
+              ) : (
+                "You are not following anyone"
+              )}
             </Box>
           </Box>
         ) : !searchResult.length > 6 ? (
@@ -138,6 +146,7 @@ function SideBar() {
           <Box
             sx={{
               width: "80%",
+              minHeigth: "70%",
               overflowX: "hidded",
               overflow: "scroll",
               marginTop: 2,

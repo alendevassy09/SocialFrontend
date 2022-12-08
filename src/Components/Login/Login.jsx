@@ -14,12 +14,20 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import axios from "../../Axios/axios";
 import { useNavigate } from "react-router-dom";
-import { Box, TextField, Container, Button, Typography } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Container,
+  Button,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 import styles from "./LoginStyles";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { update } from "../../Redux/UserSlice";
 import { useEffect } from "react";
+import ForgotPass from "../ForgotPass/ForgotPass";
 const schema = yup.object().shape({
   email: yup
     .string()
@@ -36,6 +44,8 @@ function Login() {
   const navigate = useNavigate();
   const [LoginState, SetLoginState] = useState();
   const dispatch = useDispatch();
+  const [wait, setWait] = useState(false);
+  const [err, setErr] = useState(false);
   const {
     register,
     formState: { errors },
@@ -66,56 +76,60 @@ function Login() {
     event.preventDefault();
   };
   const submitForm = (data) => {
-    console.log("sdfsd");
-    console.log(data);
-    axios.post("/userlogin", data).then((response) => {
-      if (response.data.user) {
-        if (response.data.password) {
-          console.log(response.data.userData._id);
-          localStorage.setItem('userData', JSON.stringify(response.data.userData))
-          dispatch(
-            update({
-              userId: response.data.userData._id,
-              fname: response.data.userData.firstName,
-              lname: response.data.userData.LastName,
-            })
-          );
-          localStorage.setItem("userToken", response.data.token);
-          navigate("/home");
+    setWait(true);
+    setErr(false);
+    axios
+      .post("/userlogin", data)
+      .then((response) => {
+        if (response.data.user) {
+          if (response.data.password) {
+            console.log(response.data.userData._id);
+            localStorage.setItem(
+              "userData",
+              JSON.stringify(response.data.userData)
+            );
+            dispatch(
+              update({
+                userId: response.data.userData._id,
+                fname: response.data.userData.firstName,
+                lname: response.data.userData.LastName,
+              })
+            );
+            localStorage.setItem("userToken", response.data.token);
+            navigate("/home");
+            setWait(false);
+          } else {
+            SetLoginState("Wrong Password");
+            setWait(false);
+          }
         } else {
-          SetLoginState("Wrong Password");
+          SetLoginState("User Does Not Exist");
+          setWait(false);
         }
-      } else {
-        SetLoginState("User Does Not Exist");
-      }
-    });
+      })
+      .catch((err) => {
+        setWait(false);
+        setErr(true);
+      });
   };
 
-
-
-
-
-  function handleCallbackResponse(response){
+  function handleCallbackResponse(response) {
     console.log(response.credentials);
   }
-  useEffect(()=>{
+  useEffect(() => {
     window.google.accounts.id.initialize({
-      client_id:"425906299488-pf2bkkrae0ste6lkaf5rvenbulncqd53.apps.googleusercontent.com",
-      callback:handleCallbackResponse
-    })
+      client_id:
+        "425906299488-pf2bkkrae0ste6lkaf5rvenbulncqd53.apps.googleusercontent.com",
+      callback: handleCallbackResponse,
+    });
     window.google.accounts.id.renderButton(
       document.getElementById("signInButton"),
-      {theme:"outline",size:"large"}
-    )
-  },[])
-
-
-
-
-
+      { theme: "outline", size: "large" }
+    );
+  }, []);
 
   return (
-    <Box sx={{backgroundColor:"whitesmoke"}}>
+    <Box sx={{ backgroundColor: "whitesmoke" }}>
       <Container sx={styles.container}>
         <Box sx={styles.ContainerMainBox}>
           <form onSubmit={handleSubmit(submitForm)}>
@@ -160,7 +174,7 @@ function Login() {
               </InputLabel>
 
               <Input
-                error={errors.password ? true : false}
+                error={errors.pasword ? true : false}
                 {...register("pasword")}
                 required
                 fullWidth
@@ -181,7 +195,7 @@ function Login() {
                 }
               />
               <small style={{ color: "red" }}>
-                {errors.password ? errors.password.message : ""}
+                {errors.pasword ? errors.pasword.message : ""}
               </small>
             </FormControl>
             <Box
@@ -192,9 +206,17 @@ function Login() {
               }}
             >
               <Box>
-                <Button type="submit" sx={{ marginTop: 3 }} variant="contained">
-                  Login In
-                </Button>
+                {!wait ? (
+                  <Button
+                    type="submit"
+                    sx={{ marginTop: 3 }}
+                    variant="contained"
+                  >
+                    Login In
+                  </Button>
+                ) : (
+                  <CircularProgress sx={{ marginTop: 3 }} />
+                )}
               </Box>
               <Box sx={{ marginTop: 2 }}>
                 <Typography sx={{ marginTop: 2, color: "#9bc0ff" }} variant="p">
@@ -203,20 +225,25 @@ function Login() {
               </Box>
 
               <Box>
-                <div id="signInButton">
-
-                </div>
+                <div id="signInButton"></div>
                 {/* <IconButton  sx={styles.googleIcon} aria-label="delete">
                   <GoogleIcon style={{ color: "white" }}></GoogleIcon>
                 </IconButton> */}
               </Box>
             </Box>
+            <Box sx={{ textAlign: "center", width: "100%" }}>
+              {err ? (
+                <small style={{ color: "red", marginTop: 1 }}>
+                  Something Went Wrong.Try Refresh Page
+                </small>
+              ) : (
+                ""
+              )}
+            </Box>
           </form>
           <Box sx={styles.TextBox}>
             <SignUp></SignUp>
-            <Typography sx={styles.TextBoxQuestion} variant="p">
-              Forgot Password?
-            </Typography>
+            <ForgotPass></ForgotPass>
           </Box>
         </Box>
       </Container>

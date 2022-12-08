@@ -4,24 +4,23 @@ import {
   Card,
   CardContent,
   CardMedia,
-  Fab,
   IconButton,
   Modal,
   styled,
   Tab,
   Tabs,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import React, { useEffect } from "react";
-import AddIcon from "@mui/icons-material/Add";
 import { openUpdate } from "../../Redux/profileModalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Close, Home, School, Work } from "@mui/icons-material";
 import PropTypes from "prop-types";
-import Posts from "../Posts/Post";
+import Posts from "./Posts/Post";
 import axios from "../../Axios/axios";
 import { useState } from "react";
+import { singleProfileUpdate } from "../../Redux/SingleProfileSlice";
+
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -55,28 +54,29 @@ function a11yProps(index) {
   };
 }
 
-const StyledModal = styled(Modal)({
+const StyledProfileModal = styled(Modal)({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
+  zIndex:8
 });
 
 function ProfileModal() {
   const token = localStorage.getItem("userToken");
-  const posts = useSelector((state) => state.post.post);
+  // const posts = useSelector((state) => state.post.post);
   const [followers, setFollowers] = useState(0);
   const [following, setFollowing] = useState(0);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.singleProfile.singleProfile);
-
+  const [posts, setPost] = useState([]);
   const open = useSelector((state) => state.profileModal.open);
-  const setOpen = (openModal) => {
-    dispatch(
-      openUpdate({
-        open: openModal,
-      })
-    );
-  };
+  // const setOpen = (openModal) => {
+  //   dispatch(
+  //     openUpdate({
+  //       open: openModal,
+  //     })
+  //   );
+  // };
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -93,31 +93,48 @@ function ProfileModal() {
           setFollowing(response.data.following);
         });
     }
+    if (user.user !== undefined) {
+      axios
+        .get("/profileModalPost", { headers: { token, id: user.user._id } })
+        .then((response) => {
+          setPost(response.data);
+          console.log(response.data);
+        });
+    }
   }, [user]);
+  // useEffect(() => {
+    
+  // }, [user]);
+  function closeModal(){
+    setPost([]);
+    dispatch(
+      singleProfileUpdate({
+        singleProfile:{},
+      })
+    );
+    dispatch(
+
+      openUpdate({
+        open: false,
+      })
+    );
+  }
+
   return (
-    <>
-      <Tooltip
-        onClick={(e) => {
-          setOpen(true);
-        }}
-        title="New Post"
-        sx={{
-          display: "none",
-          backgroundColor: "#1F3541",
-        }}
-      >
-        <Fab color="primary" aria-label="add">
-          <AddIcon />
-        </Fab>
-      </Tooltip>
-      <StyledModal
-        open={open}
+    <Box>
+      
+      <StyledProfileModal
+      key={user.user?user.user._id:1}
+        open={user.user!==undefined?open:false}
         sx={{ outline: "none" }}
-        onClose={(e) => {
-          setOpen(false);
-        }}
+        // onClose={(e) => {
+        //   closeModal()
+          
+        //  //setOpen(false);
+        // }}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
+        
       >
         <Box
           height={"auto"}
@@ -144,9 +161,11 @@ function ProfileModal() {
           }}
         >
           <Box sx={{ width: "100%", display: "flex", justifyContent: "end" }}>
+            
             <IconButton
               onClick={(e) => {
-                setOpen(false);
+                closeModal();
+
               }}
               size="large"
             >
@@ -211,7 +230,11 @@ function ProfileModal() {
                       component="div"
                     >
                       {Object.keys(user).length !== 0
-                        ? user.user.firstName + " " + user.user.LastName
+                        ? user.user.firstName.charAt(0).toUpperCase() +
+                          user.user.firstName.slice(1) +
+                          " " +
+                          user.user.LastName.charAt(0).toUpperCase() +
+                          user.user.LastName.slice(1)
                         : ""}
                     </Typography>
                     <Box sx={{ display: "flex", gap: 1 }}>
@@ -274,9 +297,8 @@ function ProfileModal() {
                           fontSize="small"
                           sx={{ color: "grey", marginRight: 1 }}
                         ></School>
-                        
+
                         <Typography>Studied at: Not Available </Typography>
-                       
                       </Box>
                     )}
                     {user.user.liveAt ? (
@@ -329,18 +351,22 @@ function ProfileModal() {
                 gap: 1,
               }}
             >
-              {posts.map((obj) => {
+            {posts[0]?posts.map((obj) => {
                 return (
                   <Box sx={{ width: "100%", marginBottom: { xs: 1, md: 0 } }}>
                     <Posts key={obj._id} id={obj._id} data={obj}></Posts>
                   </Box>
                 );
-              })}
+              }):<Box sx={{width:"100%",height:200,display:"flex",justifyContent:"center"}}>
+                <Typography variant="h6">
+                   No Posts Yet
+                </Typography>
+                </Box>}
             </Box>
           </Box>
         </Box>
-      </StyledModal>
-    </>
+      </StyledProfileModal>
+    </Box>
   );
 }
 

@@ -12,9 +12,10 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import axios from "../../Axios/axios"
+import axios from "../../Axios/axios";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
+import { useRef } from "react";
 
 const schema = yup.object().shape({
   firstName: yup
@@ -32,8 +33,24 @@ const schema = yup.object().shape({
     .min(4)
     .max(8)
     .required(),
+  ConfirmPassword: yup
+    .string()
+    .min(4)
+    .max(8)
+    .required()
+    .oneOf([yup.ref("pasword")], "Passwords do not match"),
+  Verification: yup
+    .string()
+    .required()
+    .matches(/^[0-9]+$/, "Must be only digits")
+    .min(6, "Must be exactly 6 digits")
+    .max(6, "Must be exactly 6 digits"),
 });
 function SignUp() {
+  const [verification, setVerification] = useState("");
+  const [sendCode, setsendCode] = useState(false);
+  const [email, setEmail] = useState("");
+  const getEmail = useRef();
   const [state, setSnackbar] = React.useState({
     snackBar: false,
     vertical: "top",
@@ -41,7 +58,7 @@ function SignUp() {
   });
 
   const { vertical, horizontal, snackBar } = state;
-
+  const [wrongCode, setWrongCode] = useState(false);
   const [age, setAge] = React.useState("");
   const navigate = useNavigate();
   const handleChangeGender = (event) => {
@@ -69,20 +86,47 @@ function SignUp() {
     outline: "none",
     borderRadius: 3,
   };
-  
-
+  const [code, setCode] = useState(0);
+  const [errMsg, seterrMsg] = useState(false);
   const submitForm = (data) => {
-    axios.post("/signup", data).then((response) => {
-      if (response.data.response.exist) {
-        console.log(response.data.response.exist);
-        setSnackbar({ snackBar: true, vertical: "top", horizontal: "center" });
-        console.log(snackBar);
+    if (code === parseInt(verification)) {
+      axios.post("/signup", data).then((response) => {
+        if (response.data.response.exist) {
+          console.log(response.data.response.exist);
+          setSnackbar({
+            snackBar: true,
+            vertical: "top",
+            horizontal: "center",
+          });
+          setCode(0);
+          setsendCode(false);
+          setWrongCode(false);
+          console.log(snackBar);
+        } else {
+          localStorage.setItem("userToken", response.data.token);
+          navigate("/home");
+        }
+      });
+    } else {
+      setWrongCode(true);
+    }
+  };
+  function sendEmail() {
+    console.log("this is the email", email);
+    axios.get("/sendEmail", { headers: { email: email } }).then((response) => {
+      console.log(response);
+      if (!response.data.status) {
+        setsendCode(true);
+        setCode(response.data.code);
       } else {
-        localStorage.setItem("userToken", response.data.token);
-        navigate("/home");
+        seterrMsg(true);
       }
     });
-  };
+  }
+  function emailSet(e) {
+    setEmail(e.target.value);
+    console.log(e.target.value);
+  }
 
   return (
     <div>
@@ -95,9 +139,9 @@ function SignUp() {
         message="User Already Exists"
         key={vertical + horizontal}
       />
-      <Typography sx={{ cursor: "pointer" }} onClick={handleOpen}>
+      <Button size="small" sx={{ cursor: "pointer" }} onClick={handleOpen}>
         Create Account
-      </Typography>
+      </Button>
 
       <Grid container>
         <Modal
@@ -170,8 +214,6 @@ function SignUp() {
                   </Grid>
                   <Grid item xs={12} md={5.8} sx={{ marginBottom: 1 }}>
                     <TextField
-            
-                 
                       {...register("LastName")}
                       type="text"
                       name="LastName"
@@ -187,16 +229,21 @@ function SignUp() {
                 </Grid>
 
                 <TextField
+                  defaultValue={email}
+                  onInput={emailSet}
                   error={errors.email ? true : false}
                   required
+                  ref={getEmail}
+                  className="email"
                   name="email"
                   type={"email"}
                   {...register("email")}
                   fullWidth
-                  id="outlined-required"
+                  id="outlind-required"
                   label={errors.email ? errors.email.message : "Email"}
                 />
                 <TextField
+                  //onInput={emailSet}
                   {...register("pasword")}
                   name="pasword"
                   required
@@ -205,7 +252,22 @@ function SignUp() {
                   fullWidth
                   id="outlined-required"
                   error={errors.pasword ? true : false}
-                  label={errors.pasword ? errors.pasword.message : "Passsword"}
+                  label={errors.pasword ? errors.pasword.message : "Password"}
+                />
+                <TextField
+                  {...register("ConfirmPassword")}
+                  name="ConfirmPassword"
+                  required
+                  type="password"
+                  sx={{ marginTop: 1 }}
+                  fullWidth
+                  id="outlined-required"
+                  error={errors.ConfirmPassword ? true : false}
+                  label={
+                    errors.ConfirmPassword
+                      ? errors.ConfirmPassword.message
+                      : "Confirm Password"
+                  }
                 />
 
                 <FormControl fullWidth>
@@ -257,18 +319,102 @@ function SignUp() {
                     }}
                   ></Grid> */}
                 </FormControl>
+                {/* {sendCode && (
+                  <Typography>
+                    Enter The Verification Code Received In Your Email Address*
+                  </Typography>
+                )} */}
+
+                <TextField
+                  {...register("Verification")}
+                  name="Verification"
+                  value={verification}
+                  onChange={(e) => {
+                    setVerification(e.target.value);
+                  }}
+                  required
+                  helperText="Enter The Verification Code Received In Your Email Address*"
+                  type="text"
+                  sx={{ marginTop: 1, display: !sendCode ? "none" : "block" }}
+                  fullWidth
+                  id="outlined-required"
+                  error={errors.Verification ? true : false}
+                  label={
+                    errors.Verification
+                      ? errors.Verification.message
+                      : "Verification"
+                  }
+                />
+                {wrongCode && (
+                  <Box
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <small style={{ color: "red" }}>
+                      Wrong Verification Code
+                    </small>
+                  </Box>
+                )}
+                {sendCode && (
+                  <Box
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "end",
+                    }}
+                  >
+                    <Button
+                      onClick={() => {
+                        sendEmail();
+                      }}
+                      sx={{ marginLeft: "auto" }}
+                    >
+                      Resend Code
+                    </Button>
+                  </Box>
+                )}
+                {errMsg && (
+                  <Box
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "center",
+                      marginTop:1
+                    }}
+                  >
+                    <small style={{ color: "red" }}>
+                      Check Every Fields before Proceeding
+                    </small>
+                  </Box>
+                )}
+                
                 <Grid
                   item
                   xs={12}
                   sx={{ display: "flex", justifyContent: "center" }}
                 >
-                  <Button
-                    sx={{ marginTop: 2 }}
-                    type="submit"
-                    variant="contained"
-                  >
-                    Sign Up
-                  </Button>
+                  {sendCode ? (
+                    <Button
+                      sx={{ marginTop: 2 }}
+                      type="submit"
+                      variant="contained"
+                    >
+                      Sign Up
+                    </Button>
+                  ) : (
+                    <Button
+                      sx={{ marginTop: 2 }}
+                      onClick={() => {
+                        sendEmail();
+                      }}
+                      variant="contained"
+                    >
+                      Continue
+                    </Button>
+                  )}
                 </Grid>
               </form>
             </Grid>

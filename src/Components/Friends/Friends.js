@@ -4,6 +4,11 @@ import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 import React, { useState } from "react";
 import axios from "../../Axios/axios";
+import { useDispatch } from "react-redux";
+import { singleProfileUpdate } from "../../Redux/SingleProfileSlice";
+import { openUpdate } from "../../Redux/profileModalSlice";
+import { useNavigate } from "react-router-dom";
+
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
     backgroundColor: "#44b700",
@@ -33,6 +38,8 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 function Friends(props) {
+  const navigate=useNavigate()
+  const dispatch = useDispatch();
   const data = props.data.user;
   const token = localStorage.getItem("userToken");
   console.log(data.status);
@@ -46,6 +53,36 @@ function Friends(props) {
         SetFollowStatus(response.data.status);
       });
   };
+  function profielModal(open, id) {
+    console.log(id);
+    localStorage.setItem("profileModal", JSON.stringify(id));
+
+    dispatch(
+      openUpdate({
+        open: open,
+      })
+    );
+    dispatch(
+      singleProfileUpdate({
+        singleProfile: { user: id },
+      })
+    );
+  }
+  function session(call) {
+    axios
+      .get("/authCheck", {
+        headers: { token: localStorage.getItem("userToken") },
+      })
+      .then((response) => {
+        if (!response.data.status) {
+          localStorage.removeItem("userToken");
+          navigate("/");
+        } else {
+          // likePost()
+          call()
+        }
+      });
+  }
 
   return (
     <Box
@@ -54,8 +91,8 @@ function Friends(props) {
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
-        
-        width:"100%",
+        cursor: "pointer",
+        width: "100%",
       }}
     >
       <StyledBadge
@@ -69,8 +106,8 @@ function Friends(props) {
             height: { md: 36, lg: 56 },
             border: "solid",
             borderWidth: "large",
-            borderColor: "#023047",
-            }}
+            borderColor: "#9c89b8",
+          }}
           alt="Remy Sharp"
           src={
             !data.profile
@@ -79,21 +116,45 @@ function Friends(props) {
           }
         />
       </StyledBadge>
-      <Typography sx={{ marginLeft: 1 }}>
+      <Typography
+        onClick={() => {
+          profielModal(true, data);
+        }}
+        sx={{ marginLeft: 1, cursor: "pointer" }}
+      >
         {data.firstName.toUpperCase()}{" "}
       </Typography>
-
+      {/* {followStatus ? (
+        <Button
+          color="secondary"
+          disabled={false}
+          size="small"
+          variant="elevated"
+        >
+          Unfollow
+        </Button>
+      ) : (
+        <Button
+          color="secondary"
+          disabled={false}
+          size="small"
+          variant="elevated"
+        >
+          Follow
+        </Button>
+      )} */}
       <Typography
-        onClick={follow}
+        onClick={()=>session(follow)}
         sx={{
-          
           color: "#14213d",
           borderRadius: 2,
           backgroundColor: "#a594f9",
           padding: 1,
           fontSize: 11,
           cursor: "pointer",
-          marginLeft:"auto"
+          marginLeft: "auto",
+          width:"19%",
+          textAlign:"center"
         }}
       >
         {followStatus ? "Unfollow" : "Follow"}

@@ -9,6 +9,7 @@ import SingleStorySlice from "./SingleStorySlice";
 import profileModalSlice from "./profileModalSlice";
 import SingleProfileSlice from "./SingleProfileSlice";
 import SuggestedSlice from "./SuggestedSlice";
+import SavedSlice from "./SavedSlice";
 export default configureStore({
     reducer:{
         user:userReducer,
@@ -19,6 +20,7 @@ export default configureStore({
         singleStory:SingleStorySlice,
         profileModal:profileModalSlice,
         singleProfile:SingleProfileSlice,
-        suggested:SuggestedSlice
+        suggested:SuggestedSlice,
+        saved:SavedSlice
     }
 })

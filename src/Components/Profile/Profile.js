@@ -1,7 +1,4 @@
-import {
-  Create,
-  PhotoCamera,
-} from "@mui/icons-material";
+import { Create, PhotoCamera } from "@mui/icons-material";
 import {
   Avatar,
   Box,
@@ -12,7 +9,6 @@ import {
   IconButton,
   ImageList,
   ImageListItem,
-
   Typography,
 } from "@mui/material";
 import { Stack } from "@mui/system";
@@ -27,8 +23,7 @@ import ProfileContents from "./ProfileContents";
 import axiosImage from "../../Axios/ImageUpload";
 import axios from "../../Axios/axios";
 import { useEffect } from "react";
-import ProfileModal from "./ProfileModal";
-import { openUpdate } from "../../Redux/profileModalSlice";
+import { openUpdate } from "../../Redux/profileModalSlice"; 
 import { singleProfileUpdate } from "../../Redux/SingleProfileSlice";
 import { useDispatch } from "react-redux";
 import Bio from "./Bio";
@@ -38,6 +33,8 @@ function Profile() {
   const token = localStorage.getItem("userToken");
   const [profilePic, setProfilePic] = useState("");
   const [coverPic, setCoverPic] = useState("");
+  const [lat, setLat] = useState(10.4562688);
+  const [setLong] = useState(76.1004032);
   const [value] = useState("");
   const [profile, setProfile] = useState({});
   const [cover, setCover] = useState({});
@@ -49,7 +46,7 @@ function Profile() {
   const [useTitle, setUserTitle] = useState("");
   const [swith, setSwitch] = useState(true);
   const [button, setButton] = useState(false);
-
+  const [user,setUser]=useState()
   const [study, setStudy] = useState();
   const [live, setLive] = useState();
   const [worksAt, setWorksAt] = useState();
@@ -67,7 +64,7 @@ function Profile() {
         open: open,
       })
     );
-  };
+  }
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -80,19 +77,38 @@ function Profile() {
     axios
       .get("/profilePicGet", { headers: { token: token } })
       .then((response) => {
-        console.log(response.data);
-        setWorksAt(response.data.followers.user.worksAt);
-        setStudy(response.data.followers.user.studiedAt)
-        setLive(response.data.followers.user.liveAt)
-        setProfilePic(response.data.followers.user.profile);
-        setCoverPic(response.data.followers.user.cover);
+        console.log("profile pic", response.data);
+        setUser(response.data.followers ? response.data.followers.user: {})
+        setWorksAt(
+          response.data.followers ? response.data.followers.user.worksAt : ""
+        );
+        setStudy(
+          response.data.followers ? response.data.followers.user.studiedAt : ""
+        );
+        setLive(
+          response.data.followers ? response.data.followers.user.liveAt : ""
+        );
+        setProfilePic(
+          response.data.followers ? response.data.followers.user.profile : ""
+        );
+        setCoverPic(
+          response.data.followers ? response.data.followers.user.cover : ""
+        );
+        // setLat(response.data.followers ? response.data.followers.user.lat : 10.4562688);
+        // setLong(
+        //   response.data.followers ? response.data.followers.user.long : 76.1004032
+        // );
         setUserTitle(
-          response.data.followers.user.firstName +
-            " " +
-            response.data.followers.user.LastName
+          response.data.followers
+            ? response.data.followers.user.firstName.charAt(0).toUpperCase() +
+                response.data.followers.user.firstName.slice(1) +
+                " " +
+                response.data.followers.user.LastName.charAt(0).toUpperCase() +
+                response.data.followers.user.LastName.slice(1)
+            : ""
         );
         let a = [];
-        a = response.data.followers.followers;
+        a = response.data.followers ? response.data.followers.followers : [];
         a = a.length;
         setFollowersCount(a);
         let b = [];
@@ -101,7 +117,9 @@ function Profile() {
         setFollowingCount(b);
 
         setFollowing(response.data.following);
-        setFollowers(response.data.followers.followers);
+        setFollowers(
+          response.data.followers ? response.data.followers.followers : 0
+        );
       });
   }, []);
 
@@ -150,8 +168,8 @@ function Profile() {
     }
   };
   return (
-    <Box width={"100%"}>
-      <ProfileModal></ProfileModal>
+    <Box sx={{width:{xs:"97%",md:"100%"}}}>
+      {/* <ProfileModal></ProfileModal> */}
       <Stack
         width={"100%"}
         sx={{ marginTop: { md: 8 } }}
@@ -275,18 +293,63 @@ function Profile() {
             backgroundColor: "white",
           }}
         >
+          {/* {<UserDetails ></UserDetails>} */}
           <Box
             display={"flex"}
-            flexDirection={"column"}
+            flexDirection={"row"}
             height="100%"
             width="100%"
             justifyContent={"space-evenly"}
             marginLeft={1}
-          > 
-            <Bio data={{bio:worksAt,item:worksAt?true:false,work:true}}></Bio>
-            <Bio data={{bio:study,item:study?true:false,study:true}}></Bio>
-            <Bio data={{bio:live,item:live?true:false,live:true}}></Bio>
-        
+          >
+            <Box
+              display={"flex"}
+              flexDirection={"column"}
+              height="100%"
+              
+              sx={{width:{md:"55%",xs:"90%"}}}
+              justifyContent={"space-evenly"}
+            >
+              <Bio
+                data={{
+                  bio: worksAt,
+                  item: worksAt ? true : false,
+                  work: true,
+                }}
+              ></Bio>
+              <Bio
+                data={{ bio: study, item: study ? true : false, study: true }}
+              ></Bio>
+              <Bio
+                data={{ bio: live, item: live ? true : false, live: true }}
+              ></Bio>
+            </Box>
+            <Box height="100%" width="45%" sx={{display:"none"}}>
+              {lat ? (
+                <Button
+                  onClick={() => {
+                    if (navigator.geolocation) {
+                      navigator.geolocation.getCurrentPosition(showPosition);
+                    } else {
+                    }
+                    function showPosition(position) {
+                      let lat =
+                        "Latitude: " +
+                        position.coords.latitude +
+                        "Longitude: " +
+                        position.coords.longitude;
+                      console.log(lat);
+                    }
+                  }}
+                >
+                  location
+                </Button>
+              ) : (
+                
+                  <iframe title="map" src={`https://maps.google.com/maps?q=10.4562688,76.1004032&hl=es;z=2000&amp;&output=embed`} id="iframeId" height="100%" width="100%"></iframe>
+               
+              )}
+            </Box>
           </Box>
         </Box>
         <Box
@@ -308,7 +371,7 @@ function Profile() {
           >
             <Box
               sx={{
-                width: "50%",
+                width: "70%",
                 display: "flex",
                 justifyContent: "space-around",
               }}
@@ -349,7 +412,6 @@ function Profile() {
               {following.map((item) => (
                 <ImageListItem
                   onClick={() => {
-                  
                     profielModal(true, item);
                   }}
                   sx={{ cursor: "pointer", textAlign: "center" }}
@@ -388,34 +450,36 @@ function Profile() {
               cols={3}
               rowHeight={164}
             >
-             
-              {followers.map((item) => (
-                <ImageListItem
-                  onClick={() => {
-                    
-                    profielModal(true,{user:item})
-                  }}
-                  sx={{ cursor: "pointer", textAlign: "center" }}
-                  key={item.img}
-                >
-                  <img
-                    style={{ maxHeight: "164px" }}
-                    src={`${
-                      !item.profile
-                        ? "https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/profile_pic/tyye6ctzdt8c9qqhegdj.png"
-                        : `https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/${item.profile}.png`
-                    }?w=164&h=164&fit=crop&auto=format`}
-                    srcSet={`${
-                      !item.profile
-                        ? "https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/profile_pic/tyye6ctzdt8c9qqhegdj.png"
-                        : `https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/${item.profile}.png`
-                    }?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-                    alt={item.title}
-                    loading="lazy"
-                  />
-                  <Typography sx={{ zIndex: 1 }}>{item.firstName}</Typography>
-                </ImageListItem>
-              ))}
+              {followers
+                ? followers.map((item) => (
+                    <ImageListItem
+                      onClick={() => {
+                        profielModal(true, { user: item });
+                      }}
+                      sx={{ cursor: "pointer", textAlign: "center" }}
+                      key={item.img}
+                    >
+                      <img
+                        style={{ maxHeight: "164px" }}
+                        src={`${
+                          !item.profile
+                            ? "https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/profile_pic/tyye6ctzdt8c9qqhegdj.png"
+                            : `https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/${item.profile}.png`
+                        }?w=164&h=164&fit=crop&auto=format`}
+                        srcSet={`${
+                          !item.profile
+                            ? "https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/profile_pic/tyye6ctzdt8c9qqhegdj.png"
+                            : `https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/${item.profile}.png`
+                        }?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                        alt={item.title}
+                        loading="lazy"
+                      />
+                      <Typography sx={{ position: "relative" }}>
+                        {item.firstName}
+                      </Typography>
+                    </ImageListItem>
+                  ))
+                : "No followers"}
             </ImageList>
           )}
         </Box>

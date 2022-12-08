@@ -42,7 +42,7 @@ function StoryModal() {
         </Fab>
       </Tooltip>
       <StyledModal
-        open={open}
+        open={false}
         sx={{ outline: "none" }}
         onClose={(e) => {
           setOpen(false);

@@ -1,4 +1,4 @@
-import { Box, ImageList, ImageListItem } from "@mui/material";
+import { Box, CircularProgress, ImageList, ImageListItem } from "@mui/material";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -11,63 +11,7 @@ function srcset(image, size, rows = 1, cols = 1) {
   };
 }
 function TrendingList() {
-  const Data = [
-    {
-      img: "",
-      title: "Breakfast",
-      rows: 2,
-      cols: 2,
-    },
-    {
-      img: "",
-      title: "Burger",
-    },
-    {
-      img: "",
-      title: "Camera",
-    },
-    {
-      img: "",
-      title: "Coffee",
-    },
-    {
-      img: "",
-      title: "Hats",
-    },
-    {
-      img: "",
-      title: "Honey",
-      author: "@arwinneil",
-    },
-    {
-      img: "",
-      title: "Basketball",
-    },
-    {
-      img: "",
-      title: "Fern",
-      rows: 2,
-      cols: 2,
-    },
-    {
-      img: "",
-      title: "Mushrooms",
-    },
-    {
-      img: "",
-      title: "Tomato basil",
-    },
-    {
-      img: "",
-      title: "Sea star",
-      rows: 2,
-      cols: 2,
-    },
-    {
-      img: "",
-      title: "Bike",
-    },
-  ];
+  
   const [itemData, setItemData] = useState([
     {
       img: "",
@@ -137,12 +81,12 @@ function TrendingList() {
       check: false,
     },
   ]);
-
+  const[loading,setLoading]=useState(true)
   const token = localStorage.getItem("userToken");
   useEffect(() => {
     axios.get("/getPost", { headers: { token } }).then((response) => {
+      setLoading(false)
       console.log("this is the trending", response.data);
-      let check = 0;
       for (let index = 0; index < response.data.length; index++) {
         for (let i = 0; i < itemData.length; i++) {
           if (!itemData[i].check) {
@@ -168,6 +112,7 @@ function TrendingList() {
         backgroundColor: "white",
       }}
     >
+      { loading&&<CircularProgress sx={{marginLeft:"46%",marginTop:"10%"}} />}
       <Box
         sx={{
           height: "100%",
@@ -213,6 +158,7 @@ function TrendingList() {
             )
           )}
         </ImageList>
+       
       </Box>
     </Box>
   );

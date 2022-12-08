@@ -9,10 +9,25 @@ import {
 import { Box, IconButton } from "@mui/material";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import axios from '../../Axios/axios'
 function TopBar() {
   const navigate = useNavigate();
   let [hover, setHover] = useState(1);
+  function session(url, page) {
+    axios
+      .get("/authCheck", {
+        headers: { token: localStorage.getItem("userToken") },
+      })
+      .then((response) => {
+        if (!response.data.status) {
+          localStorage.removeItem("userToken");
+          navigate("/");
+        } else {
+          setHover(page);
+          navigate(url);
+        }
+      });
+  }
   return (
     <Box
       sx={{
@@ -33,8 +48,7 @@ function TopBar() {
             backgroundColor: hover === 1 ? "#1F3541" : "",
           }}
           onClick={() => {
-            navigate("/home/dash");
-            setHover(1);
+            session("/home/dash", 1);
           }}
         >
           <HomeOutlined
@@ -56,8 +70,7 @@ function TopBar() {
             backgroundColor: hover === 2 ? "#1F3541" : "",
           }}
           onClick={() => {
-            navigate("/home/trending");
-            setHover(2);
+            session("/home/trending", 2);
           }}
         >
           <ExploreOutlined
@@ -80,8 +93,7 @@ function TopBar() {
             backgroundColor: hover === 3 ? "#1F3541" : "",
           }}
           onClick={() => {
-            navigate("/home/messages");
-            setHover(3);
+            session("/home/messages", 3);
           }}
         >
           <PersonSearchOutlined
@@ -115,8 +127,7 @@ function TopBar() {
             backgroundColor: hover === 4 ? "#1F3541" : "",
           }}
           onClick={() => {
-            navigate("/home/messages");
-            setHover(4);
+            session("/home/messages", 4);
           }}
         >
           <MessageOutlined
@@ -139,8 +150,8 @@ function TopBar() {
           }}
           onClick=
           {() => {
-            navigate("/home/notification");
-            setHover(5);
+            // navigate("/home/notification");
+            // setHover(5);
           }}
         >
           
@@ -163,8 +174,7 @@ function TopBar() {
             backgroundColor: hover === 6 ? "#1F3541" : "",
           }}
           onClick={() => {
-            navigate("/home/saved");
-            setHover(6);
+            session("/home/saved", 6);
           }}
         >
           <BookmarkBorderOutlined

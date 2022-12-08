@@ -11,6 +11,7 @@ import UserChats from "./Components/Messages/UserChats";
 import Trending from "./Components/Trending/Trending";
 import Profile from "./Components/Profile/Profile";
 import Saved from "./Components/Saved/Saved"
+import SideBar from "./Components/SharedComponents/SideBar/SideBar";
 function App() {
   return (
     <div className="App">
@@ -19,7 +20,6 @@ function App() {
           <Route element={<NotLoggedIn />}>
             <Route path="/" element={<Login />} />
           </Route>
-
           <Route element={<LoggedIn />}>
             <Route element={<Home />} path="/home">
               <Route index element={<Navigate to="dash" />}></Route>
@@ -27,9 +27,10 @@ function App() {
               <Route path="dash" index element={<Contents />} />
               <Route path="trending" index element={<Trending />} />
               <Route path="messages" index element={<Messages />} />
-              <Route path="chat" index element={<UserChats />} />
+              <Route path="chat" index element={<UserChats />} /> 
               <Route path="profile" index element={<Profile />} />
               <Route path="saved" index element={<Saved />} />
+              <Route path="search" index element={<SideBar data={{home:false}} />} />
             </Route>
           </Route>
         </Routes>

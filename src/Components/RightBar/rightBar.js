@@ -1,16 +1,17 @@
-import { Avatar, Box, Menu, MenuItem, Typography } from "@mui/material";
+import { Avatar, Box, CircularProgress, Menu, MenuItem, Typography } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Suggested from "./Suggested";
 import { useState } from "react";
 import axios from "../../Axios/axios";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { suggestedUpdate } from "../../Redux/SuggestedSlice";
 function rightBar() {
   let userData = JSON.parse(localStorage.getItem("userData"));
   const token = localStorage.getItem("userToken");
-  const suggested = useSelector((state) => state.suggested.suggested);
+  const [suggested, setSuggested] = useState([]);
+  const [show, setShow] = useState(false);
   console.log("this is the redux suggested", suggested);
   const dispatch = useDispatch();
   const [openMenu, setOpen] = useState(false);
@@ -20,7 +21,7 @@ function rightBar() {
   const [lastName] = useState(
     userData.LastName.charAt(0).toUpperCase() + userData.LastName.slice(1)
   );
-  //const [notFollowed, setNotFollowed] = useState([]);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,7 +29,9 @@ function rightBar() {
       .get("/notFollowed", { headers: { token: token } })
       .then((response) => {
         console.log("not followed", response.data);
-        //setNotFollowed(response.data);
+        setShow(response.data.length > 0 ? true : false);
+        console.log(show);
+        setSuggested(response.data);
         dispatch(
           suggestedUpdate({
             suggested: response.data,
@@ -36,6 +39,20 @@ function rightBar() {
         );
       });
   }, []);
+  function session(url, page) {
+    axios
+      .get("/authCheck", {
+        headers: { token: localStorage.getItem("userToken") },
+      })
+      .then((response) => {
+        if (!response.data.status) {
+          localStorage.removeItem("userToken");
+          navigate("/");
+        } else {
+          navigate(url);
+        }
+      });
+  }
   return (
     <Box
       sx={{
@@ -77,14 +94,18 @@ function rightBar() {
             justifyContent="space-around"
             width={"63%"}
           >
-            
-            <Box display={"flex"} alignItems="center" onClick={(e) => setOpen(true)}>
-            <Avatar
-            sx={{marginRight:1}}
+            <Box
+              display={"flex"}
+              alignItems="center"
+              sx={{ cursor: "pointer" }}
               onClick={(e) => setOpen(true)}
-              alt="Remy Sharp"
-              src={`https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/${userData.profile}.png`}
-            />
+            >
+              <Avatar
+                sx={{ marginRight: 1 }}
+                onClick={(e) => setOpen(true)}
+                alt="Remy Sharp"
+                src={`https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/${userData.profile}.png`}
+              />
               {firstName + " " + lastName}
             </Box>
           </Box>
@@ -106,7 +127,8 @@ function rightBar() {
           <MenuItem
             onClick={() => {
               console.log("profile");
-              navigate("/home/profile");
+              
+              session("/home/profile")
             }}
           >
             Profile
@@ -124,14 +146,18 @@ function rightBar() {
           <Typography variant="h5">Suggested</Typography>
         </Box>
         <Box sx={{ width: "80%", borderTop: 1, marginTop: 2 }}>
-          {Array.isArray(suggested) && suggested.length
+          {suggested && show
+            ? Array.isArray(suggested) && suggested[0]
+              ? suggested.map((obj) => {
+                  return <Suggested data={obj}></Suggested>;
+                })
+              : <Box sx={{width:"100%",display:"flex",justifyContent:"center",paddingTop:1}}><CircularProgress/></Box> 
+            : "Working on it"}
+          {/* {Array.isArray(suggested) && suggested[0]
             ? suggested.slice(1).map((obj) => {
                 return <Suggested data={obj}></Suggested>;
               })
-            : "Please Wait...."}
-          {/* <Suggested></Suggested>
-            <Suggested></Suggested>
-            <Suggested></Suggested> */}
+            : "Please Wait...."} */}
         </Box>
       </Box>
     </Box>

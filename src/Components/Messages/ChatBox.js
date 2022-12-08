@@ -110,7 +110,9 @@ function ChatBox() {
           <KeyboardBackspace></KeyboardBackspace>
         </IconButton>
         <Avatar
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXjvkhrh8Ub6UZ14iCLq518vVx-u4cfNRlsA&usqp=CAU"
+          src={toUser.profile
+            ? `https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/${toUser.profile}.png`
+            : `https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/profile_pic/tyye6ctzdt8c9qqhegdj.png`}
           sx={{ marginLeft: 1 }}
         />
         <Typography sx={{ marginLeft: 1, fontWeight: 300 }} variant="h6">

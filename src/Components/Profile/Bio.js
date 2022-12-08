@@ -2,6 +2,7 @@ import {
   AddCircle,
   Cancel,
   CheckCircle,
+  Delete,
   Edit,
   Home,
   School,
@@ -50,6 +51,15 @@ function Bio(props) {
         });
     }
   }
+ function deletebio(data){
+  axios
+  .patch("/deleteBio", data, { headers: { token: token } })
+  .then((response) => {
+    setText('');
+    setCheck(false);
+    setEdit(false);
+  });
+ }
 
   return (
     <Box display={"flex"} alignItems={"center"} width="100%">
@@ -111,7 +121,7 @@ function Bio(props) {
             borderColor: "skyblue",
             borderRadius: 2,
             paddingX: 1,
-            width: "40%",
+            width: "100%",
           }}
         >
           {data.live && <Home fontSize="small" sx={{ color: "grey" }}></Home>}
@@ -151,7 +161,23 @@ function Bio(props) {
 
       {props.data.bio || check ? (
         !edit ? (
-          <Edit
+          <Box display={"flex"} flexDirection="row">
+            <Delete
+            onClick={() => {
+              
+              if (data.live) {
+                deletebio({ liveAt: '' });
+              } else if (data.work) {
+                deletebio({ worksAt: '' });
+              } else {
+                deletebio({ studiedAt: '' });
+              }
+              // setCheck(true)
+            }}
+            fontSize="medium"
+            sx={{ color: "skyblue", cursor: "pointer" }}
+          ></Delete>
+             <Edit
             onClick={() => {
               setEdit(true);
               // setCheck(true)
@@ -159,6 +185,8 @@ function Bio(props) {
             fontSize="medium"
             sx={{ color: "skyblue", cursor: "pointer" }}
           ></Edit>
+          </Box>
+         
         ) : (
           <Box display={"flex"}>
             <Cancel

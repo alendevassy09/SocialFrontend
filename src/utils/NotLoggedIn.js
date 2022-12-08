@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import axios from "../Axios/axios";
 import { useState } from "react";
 import { Box } from "@mui/system";
+import { CircularProgress } from "@mui/material";
 
 const NotLoggedIn = () => {
   //let auth = {authtoken:localStorage.getItem('userToken')}
@@ -26,7 +27,7 @@ const NotLoggedIn = () => {
 
   if(auth.authtoken==="loading"){
     return(
-      <Box>loading</Box>
+      <Box sx={{width:"100%",height:"95vh",display:"flex",justifyContent:"center",alignItems:"center"}}> <CircularProgress/></Box>
     )
   }else{
     return(

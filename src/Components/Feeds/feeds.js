@@ -1,12 +1,11 @@
 import { Box, CircularProgress, IconButton } from "@mui/material";
 import React from "react";
-import Posts from "../Posts/Post";
+import Posts from "../SharedComponents/Posts/Post";
 import { useSelector } from "react-redux";
 import Story from "./Stories";
 import Tabs, { tabsClasses } from "@mui/material/Tabs";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import StoryModal from "./StoryModal";
 function feeds() {
   const posts = useSelector((state) => state.post.post);
   const story = useSelector((state) => state.story.story);
@@ -26,7 +25,7 @@ function feeds() {
         maxHeight: "auto",
       }}
     >
-      <StoryModal></StoryModal>
+      {/* <StoryModal></StoryModal> */}
       {story[0]?
         <Box
           sx={{
@@ -98,6 +97,7 @@ function feeds() {
           >
             {story[0]
               ? story.map((obj) => {
+                
                   return <Story key={obj._id} data={obj}></Story>;
                 })
               : ""}
@@ -118,7 +118,8 @@ function feeds() {
         </Box>
       ) : (
         posts.map((obj) => {
-          return <Posts key={obj._id} id={obj._id} data={obj}></Posts>;
+          
+          return <Posts key={obj._id} id={obj._id} data={{...obj,area:"home"}}></Posts>;
         })
       )}
     </Box>

@@ -1,6 +1,6 @@
 import React from "react";
 // import Header from "../Header/Header";
-import SideBar from "../SideBar/SideBar";
+import SideBar from "../SharedComponents/SideBar/SideBar";
 import TopBar from "../TopBar/TopBar";
 import RightBar from "../RightBar/RightBar";
 import { Box, Stack } from "@mui/material";
@@ -12,52 +12,42 @@ import { storyUpdate } from "../../Redux/StorySlice";
 import { useEffect } from "react";
 import axios from "../../Axios/axios";
 import BottomBar from "../BottomBar/BottomBar";
+import BasicSpeedDial from "../SpeedDial/BasicSpeedDial";
+import ProfileModal from "../SharedComponents/ProfileModal";
 function Home() {
   const dispatch = useDispatch();
   let token = localStorage.getItem("userToken");
   useEffect(() => {
     axios.get("/getPost", { headers: { token } }).then((response) => {
-      //SetPost(response.data);
       dispatch(
         postUpdate({
           post: response.data,
         })
       );
     });
-
-    // axios
-    //   .get("/online", { headers: { token, status: true } })
-    //   .then((response) => {
-    //   });
-      axios.get('/getStory',{ headers: { token } }).then((response)=>{
-        console.log("this ths story from home",response.data);
-        dispatch(
-          storyUpdate({
-            story: response.data,
-          })
-        );
-      })
+    axios.get("/getStory", { headers: { token } }).then((response) => {
+      dispatch(
+        storyUpdate({
+          story: response.data,
+        })
+      );
+    });
   }, []);
 
-  // window.onbeforeunload = function(event) {
-  //   axios
-  //     .get("/online", { headers: { token, status: false } })
-  //     .then((response) => {
-  //       (response);
-  //     });
-  // };
   return (
     <div>
       <Box sx={{ backgroundColor: "#f1faee" }}>
         {/* <NavBar></NavBar> */}
-
+        <Box sx={{ display: { lg: "none", xs: "flex" } }}>
+          <BasicSpeedDial></BasicSpeedDial>
+        </Box>
         <Stack direction="row" spacing={{ md: 2 }}>
           <Box sx={{ display: { xs: "none", md: "block" } }} width="34%">
-            <SideBar></SideBar>
+            <SideBar data={{ home: true }}></SideBar>
           </Box>
           <Box
             sx={{
-              width: { lg: "32%",md: "66%", xs: "100%" },
+              width: { lg: "32%", md: "66%", xs: "100%" },
               display: "flex",
               justifyContent: "center",
             }}
@@ -68,7 +58,7 @@ function Home() {
                 position: "fixed",
                 borderBottomLeftRadius: 3,
                 borderBottomRightRadius: 3,
-                zIndex: 1,
+                zIndex: 3,
                 padding: 1,
 
                 display: { xs: "none", md: "flex" },
@@ -79,28 +69,39 @@ function Home() {
             </Box>
 
             <Outlet></Outlet>
-            
           </Box>
-          <Box sx={{ display: { xs: "none", md: "none", lg: "block",width:"34%" } }} >
+          <Box
+            sx={{
+              display: { xs: "none", md: "none", lg: "block", width: "34%" },
+            }}
+          >
             <RightBar></RightBar>
           </Box>
         </Stack>
         <Add></Add>
+        <ProfileModal></ProfileModal>
         <Box
-              sx={{
-                position: "fixed",
-                bottom:1,
-                width:"100%",
-                backgroundColor: "#1F3541",
-                zIndex:1,
-                display:{xs: "block", md: "none"}
-              }}
-            >
-              <BottomBar></BottomBar>
-            </Box>
+          sx={{
+            position: "fixed",
+            bottom: 1,
+            width: "100%",
+            backgroundColor: "#1F3541",
+            zIndex: 1,
+            display: { xs: "block", md: "none" },
+          }}
+        >
+          <BottomBar></BottomBar>
+        </Box>
       </Box>
     </div>
   );
 }
 
 export default Home;
+// window.onbeforeunload = function(event) {
+//   axios
+//     .get("/online", { headers: { token, status: false } })
+//     .then((response) => {
+//       (response);
+//     });
+// };

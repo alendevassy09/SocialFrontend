@@ -1,24 +1,26 @@
 import { Search } from "@mui/icons-material";
-import { Avatar, Box, Button, TextField, Typography } from "@mui/material";
+import { Avatar, Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "../../Axios/axios";
 function UserText() {
   let navigate = useNavigate();
   const [users, SetUsers] = useState([]);
-  const [search,setSearch]=useState([])
-  const [searchBar,setSearchBar]=useState('')
-  const [empty,setEmpty]=useState(false)
+  const [search, setSearch] = useState([]);
+  const [searchBar, setSearchBar] = useState("");
+  const [empty, setEmpty] = useState(false);
+  const [loading,setLoading]=useState(true)
   function chatBox(user) {
-    localStorage.setItem("chatTo",JSON.stringify(user));
+    localStorage.setItem("chatTo", JSON.stringify(user));
     console.log(user);
     navigate("chat");
   }
   const token = localStorage.getItem("userToken");
   useEffect(() => {
     axios.get("/getChats", { headers: { token } }).then((response) => {
+      setLoading(false)
       console.log(response.data.chats, "-=+++-=-");
       SetUsers(response.data.chats);
       // dispatch(
@@ -30,7 +32,7 @@ function UserText() {
   }, []);
 
   const doSearch = (event) => {
-    setSearchBar(event.target.value)
+    setSearchBar(event.target.value);
     axios
       .get("/search", { headers: { name: event.target.value, token: token } })
       .then((response) => {
@@ -41,17 +43,17 @@ function UserText() {
         } else {
           console.log(response.data);
           if (event.target.value !== "") {
-           // setSearchResult(response.data);
-           setSearch(response.data)
-           if(!response.data[0]){
-            setEmpty(true)
-           }else{
-            setEmpty(false)
-           }
+            // setSearchResult(response.data);
+            setSearch(response.data);
+            if (!response.data[0]) {
+              setEmpty(true);
+            } else {
+              setEmpty(false);
+            }
           } else {
-           // setSearchResult([]);
-           setSearch([])
-           setEmpty(false)
+            // setSearchResult([]);
+            setSearch([]);
+            setEmpty(false);
           }
         }
       });
@@ -64,7 +66,6 @@ function UserText() {
         padding: 2,
         backgroundColor: "white",
         borderRadius: 3,
-        
       }}
     >
       <Box
@@ -79,9 +80,9 @@ function UserText() {
       >
         <Search fontSize="large"></Search>
         <TextField
-        value={searchBar}
+          value={searchBar}
           variant="standard"
-        onChange={doSearch}
+          onChange={doSearch}
           InputProps={{
             disableUnderline: true,
           }}
@@ -96,40 +97,9 @@ function UserText() {
           width: "95%",
         }}
       >
-        {empty?<p>
-          No Results Found
-        </p>:""}
-        {
-          search[0]?search.map((obj)=>{
-
-            return(
-              <Button
-              key={obj._id}
-              variant="text"
-              onClick={() => chatBox(obj)}
-              sx={{
-                width: "95%",
-                marginTop: 1,
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                cursor: "pointer",
-                color: "black",
-              }}
-            >
-              <Box sx={{ width: "95%", display: "flex",alignItems: "center", flexDirection: "row" }}>
-                <Avatar src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsHjjRKXCxye8TBGnFxEQ9xYt3E1WLBx0sJw&usqp=CAU" sx={{ width: 56, height: 56 }} />
-                <Typography
-                  sx={{ marginLeft: 1, fontWeight: 300 }}
-                  variant="h6"
-                >
-                  {obj.firstName + " " + obj.LastName}
-                </Typography>
-              </Box>
-            </Button>
-            )
-          
-          }):users[0]!==undefined?users.map((obj) => {
+        {empty ? <p>No Results Found</p> : ""}
+        {search[0] ? (
+          search.map((obj) => {
             return (
               <Button
                 key={obj._id}
@@ -145,8 +115,22 @@ function UserText() {
                   color: "black",
                 }}
               >
-                <Box sx={{ width: "95%", display: "flex",alignItems: "center", flexDirection: "row" }}>
-                  <Avatar src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTH2-Jcdq5ovpfsmf9D9WVJj3onq90vOxDFsw&usqp=CAU" sx={{ width: 56, height: 56 }} />
+                <Box
+                  sx={{
+                    width: "95%",
+                    display: "flex",
+                    alignItems: "center",
+                    flexDirection: "row",
+                  }}
+                >
+                  <Avatar
+                    src={
+                      obj.profile
+                        ? `https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/${obj.profile}.png`
+                        : `https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/profile_pic/tyye6ctzdt8c9qqhegdj.png`
+                    }
+                    sx={{ width: 56, height: 56 }}
+                  />
                   <Typography
                     sx={{ marginLeft: 1, fontWeight: 300 }}
                     variant="h6"
@@ -156,9 +140,14 @@ function UserText() {
                 </Box>
               </Button>
             );
-          }):
-          <Button
+          })
+        ) : users[0] !== undefined ? (
+          users.map((obj) => {
+            return (
+              <Button
+                key={obj._id}
                 variant="text"
+                onClick={() => chatBox(obj)}
                 sx={{
                   width: "95%",
                   marginTop: 1,
@@ -169,24 +158,68 @@ function UserText() {
                   color: "black",
                 }}
               >
-                <Box sx={{ width: "95%", display: "flex",alignItems: "center", flexDirection: "row" }}>
-                  
+                <Box
+                  sx={{
+                    width: "95%",
+                    display: "flex",
+                    alignItems: "center",
+                    flexDirection: "row",
+                  }}
+                >
+                  <Avatar
+                    src={
+                      obj.profile
+                        ? `https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/${obj.profile}.png`
+                        : `https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/profile_pic/tyye6ctzdt8c9qqhegdj.png`
+                    }
+                    sx={{ width: 56, height: 56 }}
+                  />
                   <Typography
                     sx={{ marginLeft: 1, fontWeight: 300 }}
                     variant="h6"
                   >
-                    No Conversations
+                    {obj.firstName + " " + obj.LastName}
                   </Typography>
                 </Box>
               </Button>
-  
-  
-          }
-        
-
-
-
-        
+            );
+          })
+        ) : (
+          <Button
+            variant="text"
+            sx={{
+              width: "95%",
+              marginTop: 1,
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              cursor: "pointer",
+              color: "black",
+            }}
+          >
+            <Box
+              sx={{
+                width: "95%",
+                display: "flex",
+                alignItems: "center",
+                flexDirection: "row",
+              }}
+            >
+              {loading ? (
+                <CircularProgress
+                  sx={{ marginLeft: "48%", marginTop: "10%" }}
+                />
+              ) : (
+                <Typography
+                  sx={{ marginLeft: 1, fontWeight: 300 }}
+                  variant="h6"
+                >
+                  No Conversations
+                </Typography>
+              )}
+            </Box>
+          </Button>
+        )}
       </Box>
     </Box>
   );

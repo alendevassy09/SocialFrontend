@@ -1,11 +1,19 @@
 import { Box, CircularProgress } from "@mui/material";
 import React from "react";
-import Posts from "../Posts/Post";
-import { useSelector } from "react-redux";
+import Posts from "../SharedComponents/Posts/Post";
 import {} from "../../Redux/PostSlice";
-
+import { useState } from "react";
+import { useEffect } from "react";
+import axios from '../../Axios/axios'
 function ProfileContents() {
-  const posts = useSelector((state) => state.post.post);
+  const token = localStorage.getItem("userToken");
+  const [posts,setPost]=useState([])
+  useEffect(()=>{
+    axios.get('/mypost',{headers:{token}}).then((response)=>{
+     setPost(response.data) 
+     console.log(response.data);
+    })
+  },[])
   return (
     <Box
       sx={{
@@ -28,7 +36,7 @@ function ProfileContents() {
         </Box>
       ) : (
         posts.map((obj) => {
-          return <Posts key={obj._id} id={obj._id} data={obj}></Posts>;
+          return <Posts key={obj._id} id={obj._id} data={{...obj,area:"profile"}}></Posts>;
         })
       )}
     </Box>
