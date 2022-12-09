@@ -42,7 +42,6 @@ function Friends(props) {
   const dispatch = useDispatch();
   const data = props.data.user;
   const token = localStorage.getItem("userToken");
-  console.log(data.status);
   const [followStatus, SetFollowStatus] = useState(
     data.status === true || data.status === false ? data.status : true
   );

@@ -14,7 +14,10 @@ import axios from "../../Axios/axios";
 import BottomBar from "../BottomBar/BottomBar";
 import BasicSpeedDial from "../SpeedDial/BasicSpeedDial";
 import ProfileModal from "../SharedComponents/ProfileModal";
+import { useState } from "react";
 function Home() {
+  const [wait,setWait]=useState(false)
+  const [feed,setFeed]=useState(false)
   const dispatch = useDispatch();
   let token = localStorage.getItem("userToken");
   useEffect(() => {
@@ -24,14 +27,17 @@ function Home() {
           post: response.data,
         })
       );
-    });
-    axios.get("/getStory", { headers: { token } }).then((response) => {
-      dispatch(
-        storyUpdate({
-          story: response.data,
-        })
-      );
-    });
+      setFeed(true)
+    }).catch((err)=>{
+      console.log("there is an error with post loading");
+    })
+    // axios.get("/getStory", { headers: { token } }).then((response) => {
+    //   dispatch(
+    //     storyUpdate({
+    //       story: response.data,
+    //     })
+    //   );
+    // });
   }, []);
 
   return (

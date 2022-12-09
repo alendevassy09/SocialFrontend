@@ -123,6 +123,7 @@ function rightBar() {
             vertical: "top",
             horizontal: "right",
           }}
+          sx={{marginRight:1}}
         >
           <MenuItem
             onClick={() => {
@@ -149,6 +150,7 @@ function rightBar() {
           {suggested && show
             ? Array.isArray(suggested) && suggested[0]
               ? suggested.map((obj) => {
+                console.log(obj,'thjis osandgpioashosa[g');
                   return <Suggested data={obj}></Suggested>;
                 })
               : <Box sx={{width:"100%",display:"flex",justifyContent:"center",paddingTop:1}}><CircularProgress/></Box> 

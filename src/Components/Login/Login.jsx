@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import axios from "../../Axios/axios";
 import { useNavigate } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
 import {
   Box,
   TextField,
@@ -26,7 +27,6 @@ import styles from "./LoginStyles";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { update } from "../../Redux/UserSlice";
-import { useEffect } from "react";
 import ForgotPass from "../ForgotPass/ForgotPass";
 const schema = yup.object().shape({
   email: yup
@@ -112,22 +112,17 @@ function Login() {
         setErr(true);
       });
   };
-
-  function handleCallbackResponse(response) {
-    console.log(response.credentials);
-  }
-  useEffect(() => {
-    window.google.accounts.id.initialize({
-      client_id:
-        "425906299488-pf2bkkrae0ste6lkaf5rvenbulncqd53.apps.googleusercontent.com",
-      callback: handleCallbackResponse,
+  function google(token) {
+    axios.post("/googleAuth", {}, { headers: { token } }).then((response) => {
+      console.log(response);
+      localStorage.setItem(
+        "userData",
+        JSON.stringify(response.data.userData)
+      );
+       localStorage.setItem("userToken", response.data.token);
+       navigate("/home");
     });
-    window.google.accounts.id.renderButton(
-      document.getElementById("signInButton"),
-      { theme: "outline", size: "large" }
-    );
-  }, []);
-
+  }
   return (
     <Box sx={{ backgroundColor: "whitesmoke" }}>
       <Container sx={styles.container}>
@@ -225,7 +220,15 @@ function Login() {
               </Box>
 
               <Box>
-                <div id="signInButton"></div>
+                <GoogleLogin
+                  onSuccess={(credentialResponse) => {
+                    console.log(credentialResponse);
+                    google(credentialResponse.credential);
+                  }}
+                  onError={() => {
+                    console.log("Login Failed");
+                  }}
+                />
                 {/* <IconButton  sx={styles.googleIcon} aria-label="delete">
                   <GoogleIcon style={{ color: "white" }}></GoogleIcon>
                 </IconButton> */}

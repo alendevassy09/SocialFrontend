@@ -8,6 +8,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 function feeds() {
   const posts = useSelector((state) => state.post.post);
+  console.log(posts);
   const story = useSelector((state) => state.story.story);
   const [value, setValue] = React.useState(0);
   console.log("this the value", value);

@@ -23,7 +23,7 @@ import ProfileContents from "./ProfileContents";
 import axiosImage from "../../Axios/ImageUpload";
 import axios from "../../Axios/axios";
 import { useEffect } from "react";
-import { openUpdate } from "../../Redux/profileModalSlice"; 
+import { openUpdate } from "../../Redux/profileModalSlice";
 import { singleProfileUpdate } from "../../Redux/SingleProfileSlice";
 import { useDispatch } from "react-redux";
 import Bio from "./Bio";
@@ -46,10 +46,12 @@ function Profile() {
   const [useTitle, setUserTitle] = useState("");
   const [swith, setSwitch] = useState(true);
   const [button, setButton] = useState(false);
-  const [user,setUser]=useState()
+  const [user, setUser] = useState();
   const [study, setStudy] = useState();
   const [live, setLive] = useState();
   const [worksAt, setWorksAt] = useState();
+  const [location,setLocation]=useState()
+  const [webpage,setWebpage]=useState()
   function profielModal(open, id) {
     console.log(id);
     localStorage.setItem("profileModal", JSON.stringify(id));
@@ -78,7 +80,7 @@ function Profile() {
       .get("/profilePicGet", { headers: { token: token } })
       .then((response) => {
         console.log("profile pic", response.data);
-        setUser(response.data.followers ? response.data.followers.user: {})
+        setUser(response.data.followers ? response.data.followers.user : {});
         setWorksAt(
           response.data.followers ? response.data.followers.user.worksAt : ""
         );
@@ -88,6 +90,8 @@ function Profile() {
         setLive(
           response.data.followers ? response.data.followers.user.liveAt : ""
         );
+        setLocation(response.data.followers ? response.data.followers.user.locationAt : "")
+        setWebpage(response.data.followers ? response.data.followers.user.webPage : "")
         setProfilePic(
           response.data.followers ? response.data.followers.user.profile : ""
         );
@@ -168,7 +172,7 @@ function Profile() {
     }
   };
   return (
-    <Box sx={{width:{xs:"97%",md:"100%"}}}>
+    <Box sx={{ width: { xs: "97%", md: "100%" } }}>
       {/* <ProfileModal></ProfileModal> */}
       <Stack
         width={"100%"}
@@ -283,7 +287,7 @@ function Profile() {
         <Box
           sx={{
             width: "100%",
-            height: 200,
+            height: 250,
             borderRadius: 2,
             boxShadow: 2,
             display: "flex",
@@ -306,8 +310,7 @@ function Profile() {
               display={"flex"}
               flexDirection={"column"}
               height="100%"
-              
-              sx={{width:{md:"55%",xs:"90%"}}}
+              sx={{ width: { md: "60%", xs: "90%" } }}
               justifyContent={"space-evenly"}
             >
               <Bio
@@ -323,8 +326,14 @@ function Profile() {
               <Bio
                 data={{ bio: live, item: live ? true : false, live: true }}
               ></Bio>
+              <Bio
+                data={{ bio: location, item: location ? true : false, location: true }}
+              ></Bio>
+              <Bio
+                data={{ bio: webpage, item: webpage ? true : false, webpage: true }}
+              ></Bio>
             </Box>
-            <Box height="100%" width="45%" sx={{display:"none"}}>
+            <Box height="100%" width="45%" sx={{ display: "none" }}>
               {lat ? (
                 <Button
                   onClick={() => {
@@ -345,9 +354,13 @@ function Profile() {
                   location
                 </Button>
               ) : (
-                
-                  <iframe title="map" src={`https://maps.google.com/maps?q=10.4562688,76.1004032&hl=es;z=2000&amp;&output=embed`} id="iframeId" height="100%" width="100%"></iframe>
-               
+                <iframe
+                  title="map"
+                  src={`https://maps.google.com/maps?q=10.4562688,76.1004032&hl=es;z=2000&amp;&output=embed`}
+                  id="iframeId"
+                  height="100%"
+                  width="100%"
+                ></iframe>
               )}
             </Box>
           </Box>

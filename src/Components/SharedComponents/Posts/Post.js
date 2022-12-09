@@ -31,6 +31,7 @@ cloudinary.config({
   api_secret: "T1fAGO5nrpydYi07guzgqHYJpfE",
 });
 function Post(props) {
+  console.log(props.data, "this is profile");
   const navigate=useNavigate()
   const [comment, SetComment] = useState("");
   const [existingComments, setExistingComments] = useState(
@@ -38,7 +39,7 @@ function Post(props) {
   );
   //const saved = useSelector((state) => state.saved.saved);
   const [show, setShow] = useState("block");
-  const [data] = useState(props.data);
+  const [data,setData] = useState(props.data);
   const [check, setcheck] = useState(data.likeStatus ? true : false);
   const [likes, setLikes] = useState(data.likes ? data.likes.length : 0);
 

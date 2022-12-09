@@ -4,7 +4,9 @@ import {
   CheckCircle,
   Delete,
   Edit,
+  FmdGoodSharp,
   Home,
+  PublicSharp,
   School,
   Work,
 } from "@mui/icons-material";
@@ -83,6 +85,12 @@ function Bio(props) {
             {data.work && (
               <Work fontSize="small" sx={{ color: "grey" }}></Work>
             )}
+            {data.location && (
+              <FmdGoodSharp fontSize="small" sx={{ color: "grey" }}></FmdGoodSharp>
+            )}
+             {data.webpage && (
+              <PublicSharp fontSize="small" sx={{ color: "grey" }}></PublicSharp>
+            )}
             {data.live && (
               <Typography sx={{ marginTop: "auto" }}>
                 <b>Lives At {check ? ":" + text : ":" + props.data.bio}</b>
@@ -97,6 +105,16 @@ function Bio(props) {
             {data.work && (
               <Typography sx={{ marginTop: "auto" }}>
                 <b>Works At {check ? ":" + text : ":" + props.data.bio}</b>
+              </Typography>
+            )}
+             {data.location && (
+              <Typography sx={{ marginTop: "auto" }}>
+                <b>Location {check ? ":" + text : ":" + props.data.bio}</b>
+              </Typography>
+            )}
+            {data.webpage && (
+              <Typography sx={{ marginTop: "auto" }}>
+                <b>Webpage {check ? ":" + text : ":" + props.data.bio}</b>
               </Typography>
             )}
           </Box>
@@ -129,6 +147,8 @@ function Bio(props) {
             <School fontSize="small" sx={{ color: "grey" }}></School>
           )}
           {data.work && <Work fontSize="small" sx={{ color: "grey" }}></Work>}
+          {data.location && <FmdGoodSharp fontSize="small" sx={{ color: "grey" }}></FmdGoodSharp>}
+          {data.webpage && <PublicSharp fontSize="small" sx={{ color: "grey" }}></PublicSharp>}
           {data.live && (
             <Typography sx={{ marginTop: "auto" }}>
               <b>Lives At</b>
@@ -142,6 +162,16 @@ function Bio(props) {
           {data.work && (
             <Typography sx={{ marginTop: "auto" }}>
               <b>Works At</b>
+            </Typography>
+          )}
+          {data.location && (
+            <Typography sx={{ marginTop: "auto" }}>
+              <b>Location</b>
+            </Typography>
+          )}
+          {data.webpage && (
+            <Typography sx={{ marginTop: "auto" }}>
+              <b>Webpage</b>
             </Typography>
           )}
         </Box>
@@ -169,8 +199,12 @@ function Bio(props) {
                 deletebio({ liveAt: '' });
               } else if (data.work) {
                 deletebio({ worksAt: '' });
-              } else {
+              } else if(data.study) {
                 deletebio({ studiedAt: '' });
+              }else if(data.location){
+                deletebio({ locationAt: '' });
+              }else if(data.webpage){
+                deletebio({ webPage: '' });
               }
               // setCheck(true)
             }}
@@ -203,8 +237,12 @@ function Bio(props) {
                   editBio({ liveAt: text });
                 } else if (data.work) {
                   editBio({ worksAt: text });
-                } else {
+                } else if(data.study) {
                   editBio({ studiedAt: text });
+                }else if(data.location){
+                  editBio({ locationAt: text });
+                }else if(data.webpage){
+                  editBio({ webPage: text });
                 }
               }}
               fontSize="large"
@@ -235,8 +273,12 @@ function Bio(props) {
                 addBio({ liveAt: text });
               } else if (data.work) {
                 addBio({ worksAt: text });
-              } else {
+              } else if(data.study) {
                 addBio({ studiedAt: text });
+              } else if(data.location){
+                addBio({ locationAt: text });
+              } else if(data.webpage){
+                addBio({ webPage: text });
               }
             }}
             fontSize="large"

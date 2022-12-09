@@ -13,7 +13,7 @@ function BasicSpeedDial() {
         flexGrow: 1,
         position: "fixed",
         bottom: 90,
-        right: 16,
+        right: 21,
         zIndex: 7,
         width: 33,
         heigth: 33,

@@ -93,7 +93,7 @@ function TopBar() {
             backgroundColor: hover === 3 ? "#1F3541" : "",
           }}
           onClick={() => {
-            session("/home/messages", 3);
+            session("/home/search", 3);
           }}
         >
           <PersonSearchOutlined
