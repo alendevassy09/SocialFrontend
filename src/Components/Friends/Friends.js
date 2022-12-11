@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
@@ -45,11 +45,15 @@ function Friends(props) {
   const [followStatus, SetFollowStatus] = useState(
     data.status === true || data.status === false ? data.status : true
   );
+  const [loading,setLoading]=useState(false)
   const follow = () => {
+    setLoading(true)
     axios
       .post("/follow", { userId: data._id }, { headers: { token } })
       .then((response) => {
+        setLoading(false)
         SetFollowStatus(response.data.status);
+
       });
   };
   function profielModal(open, id) {
@@ -155,8 +159,8 @@ function Friends(props) {
           width:"19%",
           textAlign:"center"
         }}
-      >
-        {followStatus ? "Unfollow" : "Follow"}
+      > 
+        {loading?<CircularProgress color="inherit" size={"0.7rem"}></CircularProgress>:followStatus ? "Unfollow" : "Follow"}
       </Typography>
     </Box>
   );

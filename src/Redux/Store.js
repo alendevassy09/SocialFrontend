@@ -10,6 +10,7 @@ import profileModalSlice from "./profileModalSlice";
 import SingleProfileSlice from "./SingleProfileSlice";
 import SuggestedSlice from "./SuggestedSlice";
 import SavedSlice from "./SavedSlice";
+import ReportModalSlice from "./ReportModalSlice";
 export default configureStore({
     reducer:{
         user:userReducer,
@@ -21,6 +22,7 @@ export default configureStore({
         profileModal:profileModalSlice,
         singleProfile:SingleProfileSlice,
         suggested:SuggestedSlice,
-        saved:SavedSlice
+        saved:SavedSlice,
+        report:ReportModalSlice
     }
 })

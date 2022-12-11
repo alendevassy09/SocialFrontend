@@ -154,7 +154,7 @@ function rightBar() {
                   return <Suggested data={obj}></Suggested>;
                 })
               : <Box sx={{width:"100%",display:"flex",justifyContent:"center",paddingTop:1}}><CircularProgress/></Box> 
-            : "Working on it"}
+            : <Box sx={{width:"100%",textAlign:"center"}}><Typography>Refresh The Page</Typography></Box>}
           {/* {Array.isArray(suggested) && suggested[0]
             ? suggested.slice(1).map((obj) => {
                 return <Suggested data={obj}></Suggested>;

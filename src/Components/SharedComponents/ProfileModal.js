@@ -14,7 +14,7 @@ import {
 import React, { useEffect } from "react";
 import { openUpdate } from "../../Redux/profileModalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { Close, Home, School, Work } from "@mui/icons-material";
+import { Close, FmdGoodSharp, Home, Public, PublicSharp, School, Work } from "@mui/icons-material";
 import PropTypes from "prop-types";
 import Posts from "./Posts/Post";
 import axios from "../../Axios/axios";
@@ -324,10 +324,54 @@ function ProfileModal() {
                 )}
               </TabPanel>
               <TabPanel value={value} index={1}>
-                Location
+              {Object.keys(user).length !== 0 ? (
+                  <Box>
+                    {user.user.locationAt ? (
+                      <Box display={"flex"}>
+                        <FmdGoodSharp
+                          fontSize="small"
+                          sx={{ color: "grey", marginRight: 1 }}
+                        ></FmdGoodSharp>
+                        <Typography> Location :{user.user.locationAt}</Typography>
+                      </Box>
+                    ) : (
+                      <Box display={"flex"}>
+                        <FmdGoodSharp
+                          fontSize="small"
+                          sx={{ color: "grey", marginRight: 1 }}
+                        ></FmdGoodSharp>
+                        <Typography>Location : Not Available </Typography>
+                      </Box>
+                    )}
+                  </Box>
+                ) : (
+                  <Typography>Not Available</Typography>
+                )}
               </TabPanel>
               <TabPanel value={value} index={2}>
-                WebPage
+              {Object.keys(user).length !== 0 ? (
+                  <Box>
+                    {user.user.webPage ? (
+                      <Box display={"flex"}>
+                        <PublicSharp
+                          fontSize="small"
+                          sx={{ color: "grey", marginRight: 1 }}
+                        ></PublicSharp>
+                        <Typography> Webpage :{user.user.webPage}</Typography>
+                      </Box>
+                    ) : (
+                      <Box display={"flex"}>
+                        <PublicSharp
+                          fontSize="small"
+                          sx={{ color: "grey", marginRight: 1 }}
+                        ></PublicSharp>
+                        <Typography>Webpage : Not Available </Typography>
+                      </Box>
+                    )}
+                  </Box>
+                ) : (
+                  <Typography>Not Available</Typography>
+                )}
               </TabPanel>
             </Box>
             <Box

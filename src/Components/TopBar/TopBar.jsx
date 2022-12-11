@@ -51,7 +51,7 @@ function TopBar() {
             backgroundColor: hover === 1 ? "#1F3541" : "",
           }}
           onClick={() => {
-            session("/home/dash", 1);
+            session("/home/posts", 1);
           }}
         >
           <HomeOutlined

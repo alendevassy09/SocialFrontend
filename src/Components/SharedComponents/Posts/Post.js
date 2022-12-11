@@ -25,6 +25,8 @@ import Fade from "@mui/material/Fade";
 //import {  useSelector } from "react-redux";
 import cloudinary from "cloudinary/lib/cloudinary";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { openUpdate } from "../../../Redux/ReportModalSlice";
 cloudinary.config({
   cloud_name: "dcytixl43",
   api_key: "299429838137541",
@@ -32,19 +34,19 @@ cloudinary.config({
 });
 function Post(props) {
   console.log(props.data, "this is profile");
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   const [comment, SetComment] = useState("");
   const [existingComments, setExistingComments] = useState(
     props.data.comment ? props.data.comment : []
   );
   //const saved = useSelector((state) => state.saved.saved);
   const [show, setShow] = useState("block");
-  const [data,setData] = useState(props.data);
+  const [data, setData] = useState(props.data);
   const [check, setcheck] = useState(data.likeStatus ? true : false);
   const [likes, setLikes] = useState(data.likes ? data.likes.length : 0);
-
+const [reoprt,setReport]=useState(false)
   const token = localStorage.getItem("userToken");
-
+    const dispatch=useDispatch()
   const StyledBadge = styled(Badge)(({ theme }) => ({
     "& .MuiBadge-badge": {
       right: -3,
@@ -119,6 +121,17 @@ function Post(props) {
       console.log(error);
     }
   }
+  function reportPost(id) {
+    localStorage.setItem("reportId",id)
+   
+      setAnchorEl(null);
+      dispatch(
+        openUpdate({
+          open:true
+        })
+      )
+
+  }
   function removeFromSave(id) {
     try {
       if (id) {
@@ -186,7 +199,7 @@ function Post(props) {
           navigate("/");
         } else {
           // likePost()
-          call()
+          call();
         }
       });
   }
@@ -255,6 +268,16 @@ function Post(props) {
                 >
                   {save ? "Remove" : "Save"}
                 </MenuItem>
+                {data.reportPost && (
+                  <MenuItem
+                    disabled={data.report?true:false}
+                    onClick={() => {
+                      reportPost(data._id);
+                    }}
+                  >
+                    {data.report?"Reported":"Report"}
+                  </MenuItem>
+                )}
               </Menu>
             </div>
           ) : data.area === "saved" ? (
@@ -286,6 +309,7 @@ function Post(props) {
                 >
                   Delete
                 </MenuItem>
+              
               </Menu>
             </div>
           ) : data.area === "profile" ? (
@@ -384,7 +408,9 @@ function Post(props) {
 
       <CardActions disableSpacing sx={{ width: "100%" }}>
         <IconButton
-          onClick={()=>{session(likePost)}}
+          onClick={() => {
+            session(likePost);
+          }}
           aria-label="add to favorites"
           disableRipple
         >
@@ -441,7 +467,7 @@ function Post(props) {
                 SetComment(event.target.value);
               }}
             />
-            <IconButton onClick={()=>session(sendComment) }>
+            <IconButton onClick={() => session(sendComment)}>
               <Send></Send>
             </IconButton>
           </Box>

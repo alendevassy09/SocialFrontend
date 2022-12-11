@@ -15,6 +15,7 @@ import BottomBar from "../BottomBar/BottomBar";
 import BasicSpeedDial from "../SpeedDial/BasicSpeedDial";
 import ProfileModal from "../SharedComponents/ProfileModal";
 import { useState } from "react";
+import ReportModal from "../SharedComponents/ReportModal"
 function Home() {
   const [wait,setWait]=useState(false)
   const [feed,setFeed]=useState(false)
@@ -86,6 +87,7 @@ function Home() {
         </Stack>
         <Add></Add>
         <ProfileModal></ProfileModal>
+        <ReportModal></ReportModal>
         <Box
           sx={{
             position: "fixed",
