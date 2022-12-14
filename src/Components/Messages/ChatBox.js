@@ -22,7 +22,7 @@ function ChatBox() {
       .get("/chat", { headers: { token, touser: toUser._id } })
       .then((response) => {
         setTotalMsg(response.data.chat);
-        
+
         console.log(response.data.unread);
 
         socket.emit("join", response.data.room);
@@ -59,7 +59,6 @@ function ChatBox() {
   }, [socket]);
 
   useEffect(() => {
-    
     const gotMessage = {
       message: msg,
       author: "alen",
@@ -110,9 +109,11 @@ function ChatBox() {
           <KeyboardBackspace></KeyboardBackspace>
         </IconButton>
         <Avatar
-          src={toUser.profile
-            ? `https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/${toUser.profile}.png`
-            : `https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/profile_pic/tyye6ctzdt8c9qqhegdj.png`}
+          src={
+            toUser.profile
+              ? `https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/${toUser.profile}.png`
+              : `https://res.cloudinary.com/dcytixl43/image/upload/v1667718830/profile_pic/tyye6ctzdt8c9qqhegdj.png`
+          }
           sx={{ marginLeft: 1 }}
         />
         <Typography sx={{ marginLeft: 1, fontWeight: 300 }} variant="h6">
@@ -152,7 +153,7 @@ function ChatBox() {
           }}
         >
           {totalMsg.map((obj) => {
-            if (obj.sendMessage&&obj.sendMessage.message!=='') {
+            if (obj.sendMessage && obj.sendMessage.message !== "") {
               return (
                 <Box
                   sx={{
@@ -183,7 +184,7 @@ function ChatBox() {
                   </Box>
                 </Box>
               );
-            } else if (obj.gotMessage&&obj.gotMessage.message!=='') {
+            } else if (obj.gotMessage && obj.gotMessage.message !== "") {
               return (
                 <Box
                   sx={{
@@ -218,7 +219,7 @@ function ChatBox() {
               return <Box></Box>;
             }
           })}
-          
+
           {/* {unread[0]
             ? unread.map((obj) => {
                 return (
@@ -264,9 +265,15 @@ function ChatBox() {
               backgroundColor: "#AFD8F2",
               borderRadius: 3,
               boxShadow: 1,
+              marginBottom: 2,
             }}
           >
             <TextField
+            onKeyPress={(e) => {
+              if (e.key === "Enter") {
+                sendMessage();
+              }
+            }}
               fullWidth
               sx={{ marginLeft: 1 }}
               variant="standard"
@@ -279,7 +286,11 @@ function ChatBox() {
                 SetMsg(event.target.value);
               }}
             ></TextField>
-            <IconButton onClick={sendMessage} aria-label="delete">
+            <IconButton
+              
+              onClick={sendMessage}
+              aria-label="delete"
+            >
               <Send fontSize="large"></Send>
             </IconButton>
             {/* <button onClick={join}></button> */}
