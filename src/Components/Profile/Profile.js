@@ -80,7 +80,7 @@ function Profile() {
       .get("/profilePicGet", { headers: { token: token } })
       .then((response) => {
         console.log("profile pic", response.data);
-        setUser(response.data.followers ? response.data.followers.user : {});
+        setUser(response.data.user ? response.data.user : {});
         setWorksAt(
           response.data.followers ? response.data.followers.user.worksAt : ""
         );
@@ -93,22 +93,22 @@ function Profile() {
         setLocation(response.data.followers ? response.data.followers.user.locationAt : "")
         setWebpage(response.data.followers ? response.data.followers.user.webPage : "")
         setProfilePic(
-          response.data.followers ? response.data.followers.user.profile : ""
+          response.data.user ? response.data.user.profile : ""
         );
         setCoverPic(
-          response.data.followers ? response.data.followers.user.cover : ""
+          response.data.user ? response.data.user.cover : ""
         );
         // setLat(response.data.followers ? response.data.followers.user.lat : 10.4562688);
         // setLong(
         //   response.data.followers ? response.data.followers.user.long : 76.1004032
         // );
         setUserTitle(
-          response.data.followers
-            ? response.data.followers.user.firstName.charAt(0).toUpperCase() +
-                response.data.followers.user.firstName.slice(1) +
+          response.data.user
+            ? response.data.user.firstName.charAt(0).toUpperCase() +
+                response.data.user.firstName.slice(1) +
                 " " +
-                response.data.followers.user.LastName.charAt(0).toUpperCase() +
-                response.data.followers.user.LastName.slice(1)
+                response.data.user.LastName.charAt(0).toUpperCase() +
+                response.data.user.LastName.slice(1)
             : ""
         );
         let a = [];
