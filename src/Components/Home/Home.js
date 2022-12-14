@@ -8,7 +8,6 @@ import Add from "../Add/Add";
 import { Outlet } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { postUpdate } from "../../Redux/PostSlice";
-import { storyUpdate } from "../../Redux/StorySlice";
 import { useEffect } from "react";
 import axios from "../../Axios/axios";
 import BottomBar from "../BottomBar/BottomBar";
@@ -17,7 +16,6 @@ import ProfileModal from "../SharedComponents/ProfileModal";
 import { useState } from "react";
 import ReportModal from "../SharedComponents/ReportModal"
 function Home() {
-  const [wait,setWait]=useState(false)
   const [feed,setFeed]=useState(false)
   const dispatch = useDispatch();
   let token = localStorage.getItem("userToken");

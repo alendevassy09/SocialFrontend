@@ -44,7 +44,7 @@ function Post(props) {
   const [data, setData] = useState(props.data);
   const [check, setcheck] = useState(data.likeStatus ? true : false);
   const [likes, setLikes] = useState(data.likes ? data.likes.length : 0);
-const [reoprt,setReport]=useState(false)
+//const [reoprt,setReport]=useState(false)
   const token = localStorage.getItem("userToken");
     const dispatch=useDispatch()
   const StyledBadge = styled(Badge)(({ theme }) => ({

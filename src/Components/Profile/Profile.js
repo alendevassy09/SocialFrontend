@@ -33,8 +33,8 @@ function Profile() {
   const token = localStorage.getItem("userToken");
   const [profilePic, setProfilePic] = useState("");
   const [coverPic, setCoverPic] = useState("");
-  const [lat, setLat] = useState(10.4562688);
-  const [setLong] = useState(76.1004032);
+  const [lat] = useState(10.4562688);
+  //const [setLong] = useState(76.1004032);
   const [value] = useState("");
   const [profile, setProfile] = useState({});
   const [cover, setCover] = useState({});

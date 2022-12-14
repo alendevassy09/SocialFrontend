@@ -6,7 +6,7 @@ import axios from "../../Axios/axios";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useState } from "react";
-const socket = io.connect("http://localhost:4000");
+const socket = io.connect("https://blissglasess.shop");
 function ChatBox() {
   const token = localStorage.getItem("userToken");
   const toUser = JSON.parse(localStorage.getItem("chatTo"));

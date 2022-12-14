@@ -1,5 +1,4 @@
 import React from "react";
-import LockIcon from "@mui/icons-material/Lock";
 import IconButton from "@mui/material/IconButton";
 import Input from "@mui/material/Input";
 import Alert from "@mui/material/Alert";
@@ -8,26 +7,22 @@ import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import SignUp from "../SignUp/SignUp";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import axios from "../../Axios/axios";
 import { useNavigate } from "react-router-dom";
-import { GoogleLogin } from "@react-oauth/google";
 import {
   Box,
   TextField,
   Container,
   Button,
-  Typography,
   CircularProgress,
 } from "@mui/material";
 import styles from "./LoginStyles";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { update } from "../../Redux/UserSlice";
-import ForgotPass from "../ForgotPass/ForgotPass";
 import { AdminPanelSettings } from "@mui/icons-material";
 const schema = yup.object().shape({
   email: yup
