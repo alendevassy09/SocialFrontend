@@ -265,7 +265,7 @@ function Profile() {
               sx={{
                 position: "relative",
                 bottom: 190,
-                left: { lg: "75%", xs: "80%" },
+                left: { lg: "75%", xs: "75%" },
                 backgroundColor: "white",
                 "&:hover": { backgroundColor: "whitesmoke" },
               }}
@@ -492,7 +492,7 @@ function Profile() {
                       </Typography>
                     </ImageListItem>
                   ))
-                : "No followers"}
+                : ''}
             </ImageList>
           )}
         </Box>

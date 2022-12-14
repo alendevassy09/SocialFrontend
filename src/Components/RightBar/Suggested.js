@@ -67,18 +67,23 @@ function Suggested(props) {
         sx={{
           width: "80%",
           display: "flex",
-          justifyContent: "space-evenly",
+          //justifyContent: "space-between",
           alignItems: "center",
           marginTop: 1,
         }}
       >
         <Avatar
+        onClick={() => {
+          profielModal(true, data);
+        }}
           sx={{
             width: { md: 30, lg: 50 },
             height: { md: 30, lg: 50 },
             border: "solid",
             borderWidth: "large",
             borderColor: "#9c89b8",
+            marginLeft:3,
+            cursor:"pointer"
           }}
           alt="Remy Sharp"
           src={
@@ -92,7 +97,7 @@ function Suggested(props) {
             profielModal(true, data);
           }}
           variant="h6"
-          sx={{ cursor: "pointer" }}
+          sx={{ cursor: "pointer",marginLeft:4 }}
         >
           {data.user.firstName.toUpperCase()}
         </Typography>

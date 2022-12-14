@@ -2,6 +2,7 @@ import {
   Avatar,
   Box,
   Button,
+  CircularProgress,
   Fab,
   IconButton,
   Modal,
@@ -36,6 +37,7 @@ function Add() {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [write,setWrite]=useState(true)
+  const [loading,setLoading]=useState(true)
   const [image, setImage] = useState();
   const [value, setValue] = useState("");
   const [post, setPost] = useState({});
@@ -55,6 +57,7 @@ function Add() {
       axiosImage
         .post("/image/upload", formData)
         .then((response) => {
+          setLoading(false)
           console.log(response);
           return axios.post(
             "/post",
@@ -64,7 +67,7 @@ function Add() {
         })
         .then((response) => {
           console.log(response);
-
+          setLoading(true)
           dispatch(
             postAdd({
               post: response.data,
@@ -258,9 +261,9 @@ function Add() {
             width={"100%"}
             sx={{ display: "flex", justifyContent: "center" }}
           >
-            <Button onClick={()=>uploadImage()} variant="contained">
+            {loading?<Button onClick={()=>uploadImage()} variant="contained">
               Post
-            </Button>
+            </Button>:<CircularProgress color="secondary" />}
           </Box>
         </Box>
       </StyledModal>

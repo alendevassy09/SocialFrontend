@@ -104,6 +104,9 @@ function Friends(props) {
         variant="dot"
       >
         <Avatar
+        onClick={() => {
+          profielModal(true, data);
+        }}
           sx={{
             width: { md: 36, lg: 56 },
             height: { md: 36, lg: 56 },

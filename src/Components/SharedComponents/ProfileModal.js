@@ -4,6 +4,7 @@ import {
   Card,
   CardContent,
   CardMedia,
+  CircularProgress,
   IconButton,
   Modal,
   styled,
@@ -14,7 +15,15 @@ import {
 import React, { useEffect } from "react";
 import { openUpdate } from "../../Redux/profileModalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { Close, FmdGoodSharp, Home, Public, PublicSharp, School, Work } from "@mui/icons-material";
+import {
+  Close,
+  FmdGoodSharp,
+  Home,
+  Public,
+  PublicSharp,
+  School,
+  Work,
+} from "@mui/icons-material";
 import PropTypes from "prop-types";
 import Posts from "./Posts/Post";
 import axios from "../../Axios/axios";
@@ -58,7 +67,7 @@ const StyledProfileModal = styled(Modal)({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  zIndex:8
+  zIndex: 8,
 });
 
 function ProfileModal() {
@@ -66,6 +75,7 @@ function ProfileModal() {
   // const posts = useSelector((state) => state.post.post);
   const [followers, setFollowers] = useState(0);
   const [following, setFollowing] = useState(0);
+  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.singleProfile.singleProfile);
   const [posts, setPost] = useState([]);
@@ -83,6 +93,7 @@ function ProfileModal() {
     setValue(newValue);
   };
   useEffect(() => {
+    setLoading(true);
     console.log("hererererer", user.user);
     if (user.user !== undefined) {
       axios
@@ -97,23 +108,23 @@ function ProfileModal() {
       axios
         .get("/profileModalPost", { headers: { token, id: user.user._id } })
         .then((response) => {
+          setLoading(false);
           setPost(response.data);
           console.log(response.data);
         });
     }
   }, [user]);
   // useEffect(() => {
-    
+
   // }, [user]);
-  function closeModal(){
+  function closeModal() {
     setPost([]);
     dispatch(
       singleProfileUpdate({
-        singleProfile:{},
+        singleProfile: {},
       })
     );
     dispatch(
-
       openUpdate({
         open: false,
       })
@@ -122,19 +133,17 @@ function ProfileModal() {
 
   return (
     <Box>
-      
       <StyledProfileModal
-      key={user.user?user.user._id:1}
-        open={user.user!==undefined?open:false}
+        key={user.user ? user.user._id : 1}
+        open={user.user !== undefined ? open : false}
         sx={{ outline: "none" }}
         // onClose={(e) => {
         //   closeModal()
-          
+
         //  //setOpen(false);
         // }}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-        
       >
         <Box
           height={"auto"}
@@ -161,11 +170,9 @@ function ProfileModal() {
           }}
         >
           <Box sx={{ width: "100%", display: "flex", justifyContent: "end" }}>
-            
             <IconButton
               onClick={(e) => {
                 closeModal();
-
               }}
               size="large"
             >
@@ -324,7 +331,7 @@ function ProfileModal() {
                 )}
               </TabPanel>
               <TabPanel value={value} index={1}>
-              {Object.keys(user).length !== 0 ? (
+                {Object.keys(user).length !== 0 ? (
                   <Box>
                     {user.user.locationAt ? (
                       <Box display={"flex"}>
@@ -332,7 +339,10 @@ function ProfileModal() {
                           fontSize="small"
                           sx={{ color: "grey", marginRight: 1 }}
                         ></FmdGoodSharp>
-                        <Typography> Location :{user.user.locationAt}</Typography>
+                        <Typography>
+                          {" "}
+                          Location :{user.user.locationAt}
+                        </Typography>
                       </Box>
                     ) : (
                       <Box display={"flex"}>
@@ -349,7 +359,7 @@ function ProfileModal() {
                 )}
               </TabPanel>
               <TabPanel value={value} index={2}>
-              {Object.keys(user).length !== 0 ? (
+                {Object.keys(user).length !== 0 ? (
                   <Box>
                     {user.user.webPage ? (
                       <Box display={"flex"}>
@@ -395,20 +405,42 @@ function ProfileModal() {
                 gap: 1,
               }}
             >
-            {posts[0]?posts.map((obj) => {
-                return (
-                  <Box sx={{ width: "100%", marginBottom: { xs: 1, md: 0 } }}>
-                    <Posts key={obj._id} id={obj._id} data={obj}></Posts>
-                  </Box>
-                );
-              }):<Box sx={{width:"100%",height:200,display:"flex",justifyContent:"center"}}>
-                <Typography variant="h6">
-                   No Posts Yet
-                </Typography>
-                </Box>}
+              {loading ? (
+                <Box
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <CircularProgress color="secondary" />
+              </Box>
+              ) : posts[0] ? (
+                posts.map((obj) => {
+                  return (
+                    <Box sx={{ width: "100%", marginBottom: { xs: 1, md: 0 } }}>
+                      <Posts key={obj._id} id={obj._id} data={obj}></Posts>
+                    </Box>
+                  );
+                })
+              ) : (
+                <Box
+                  sx={{
+                    width: "100%",
+                    height: 200,
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Typography variant="h6">No Posts Yet</Typography>
+                </Box>
+              )}
             </Box>
           </Box>
         </Box>
+        
       </StyledProfileModal>
     </Box>
   );

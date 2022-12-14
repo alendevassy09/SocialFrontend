@@ -15,8 +15,9 @@ function SideBar(props) {
   let token = localStorage.getItem("userToken");
   const navigate = useNavigate();
   const [searchResult, setSearchResult] = useState([]);
+  const [loading,setLoading]=useState(false)
   const [empty, setEmpty] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [searchLoading, setsearchLoading] = useState(false);
   useEffect(() => {
     axios.get("/getFriends", { headers: { token } }).then((response) => {
       setLoading(false);
@@ -29,6 +30,7 @@ function SideBar(props) {
   }, []);
 
   const doSearch = (event) => {
+    setsearchLoading(true)
     axios
       .get("/search", {
         headers: { name: event.target.value.trim(), token: token },
@@ -42,12 +44,16 @@ function SideBar(props) {
           console.log(response.data);
           if (event.target.value !== "") {
             setSearchResult(response.data);
+            setsearchLoading(false)
             if (!response.data[0]) {
+              setsearchLoading(false)
               setEmpty(true);
             } else {
               setEmpty(false);
+              setsearchLoading(false)
             }
           } else {
+            setsearchLoading(false)
             setSearchResult([]);
             setEmpty(false);
           }
@@ -107,6 +113,7 @@ function SideBar(props) {
               placeholder="Search"
               onChange={doSearch}
             ></TextField>
+            {searchLoading&&<CircularProgress color="secondary" size={"1.7rem"}/>}
           </Box>
         </Box>
         {empty ? <p>No Results Found</p> : ""}
